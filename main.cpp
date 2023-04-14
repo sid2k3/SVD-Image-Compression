@@ -6,6 +6,9 @@
 #include <cmath>
 #include <thread>
 #include <future>
+#include <emscripten/bind.h>
+
+using namespace emscripten;
 using namespace std;
 
 Eigen::MatrixXd get_compressed_image(Eigen::MatrixXd &mat, int rank, char component)
@@ -160,4 +163,10 @@ int main(int argc, char **argv)
     cout << "STEP 2 DONE" << endl;
 
     reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b);
+}
+
+EMSCRIPTEN_BINDINGS(my_module)
+{
+    register_vector<int>("VectorInt");
+    register_vector<std::vector<int>>("VectorVectorInt");
 }

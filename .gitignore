@@ -4,3 +4,6 @@
 *.jpeg
 temp.cpp
 *.webp
+public/*.wasm
+*.exe
+public/*.js
