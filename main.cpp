@@ -114,7 +114,7 @@ std::vector<int> reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_
 }
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MyMatrix;
-
+// TODO CHANGE FN NAME
 std::vector<int> get_compressed_img(int len, int wd, int rank, std::vector<double> &r_vec, std::vector<double> &g_vec, std::vector<double> &b_vec)
 {
     // std::cout << len << " -> " << wd << std::endl;
