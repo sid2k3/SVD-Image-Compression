@@ -42,7 +42,7 @@ function extract_rgb(imageData, img_len, img_width) {
   const res = Module.get_compressed_img(
     img_len,
     img_width,
-    100,
+    600,
     rvec,
     gvec,
     bvec
@@ -51,7 +51,7 @@ function extract_rgb(imageData, img_len, img_width) {
 }
 
 function display_compressed_image(img_len, img_width, rgb_pixels) {
-  const canvas = document.querySelector('#compressed_image_canvas')
+  const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d')
   canvas.width = img_width
   canvas.height = img_len
@@ -69,6 +69,16 @@ function display_compressed_image(img_len, img_width, rgb_pixels) {
   let imageData = new ImageData(dataArray, img_width, img_len)
 
   context.putImageData(imageData, 0, 0)
-  document.querySelector('#compressed_image').src =
-    canvas.toDataURL('image/jpeg')
+  const src = canvas.toDataURL('image/webp')
+  document.querySelector('#compressed_image').src = src
+
+  let base64Length = src.length - (src.indexOf(',') + 1)
+  let padding =
+    src.charAt(src.length - 2) === '='
+      ? 2
+      : src.charAt(src.length - 1) === '='
+      ? 1
+      : 0
+  let fileSize = base64Length * 0.75 - padding
+  console.log(fileSize)
 }
