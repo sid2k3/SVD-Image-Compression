@@ -10,7 +10,7 @@
     "dev": "vite",
     "prebuild": "yarn buildwasm",
     "build": "vite build",
-    "buildwasm": "emcc -I external_libs/eigen-3.4.0 -I external_libs/RedSVD/ src/main.cpp --bind  -s ALLOW_MEMORY_GROWTH=1 && mv a.out* public/"
+    "buildwasm": "emcc -I external_libs/eigen-3.4.0 -I external_libs/RedSVD/ src/main.cpp --bind  -s ALLOW_MEMORY_GROWTH=1 -s PTHREAD_POOL_SIZE=4 -pthread && mv a.out* public/"
   },
   "type": "module",
   "devDependencies": {

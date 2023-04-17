@@ -14,6 +14,7 @@ Eigen::MatrixXd get_compressed_image(Eigen::MatrixXd &mat, int rank, char compon
 {
 
     RedSVD::RedSVD<Eigen::MatrixXd> mtr(mat, rank);
+    std::cout << mat.size() << std::endl;
 
     Eigen::MatrixXd U = mtr.matrixU();
 
@@ -134,25 +135,19 @@ std::vector<int> get_compressed_img(int len, int wd, int rank, std::vector<doubl
 
     std::cout << "STEP 1 DONE" << std::endl;
 
-    // std::future<Eigen::MatrixXd> f1 = std::async(std::launch::async, get_compressed_image, std::ref(img_r), rank, 'R');
+    std::future<Eigen::MatrixXd> f1 = std::async(std::launch::async, get_compressed_image, std::ref(img_r), rank, 'R');
 
-    // std::future<Eigen::MatrixXd> f2 = std::async(std::launch::async, get_compressed_image, std::ref(img_g), rank, 'G');
-    // std::future<Eigen::MatrixXd> f3 = std::async(std::launch::async, get_compressed_image, std::ref(img_b), rank, 'B');
+    std::future<Eigen::MatrixXd> f2 = std::async(std::launch::async, get_compressed_image, std::ref(img_g), rank, 'G');
+    std::future<Eigen::MatrixXd> f3 = std::async(std::launch::async, get_compressed_image, std::ref(img_b), rank, 'B');
     std::cout << "threads created" << std::endl;
-    // Eigen::
-    //     MatrixXd compressed_img_r = f1.get();
+    Eigen::
+        MatrixXd compressed_img_r = f1.get();
 
-    // Eigen::
-    //     MatrixXd compressed_img_g = f2.get();
+    Eigen::
+        MatrixXd compressed_img_g = f2.get();
 
-    // Eigen::
-    //     MatrixXd compressed_img_b = f3.get();
-
-    Eigen::MatrixXd compressed_img_r = get_compressed_image(img_r, rank, 'R');
-    Eigen::MatrixXd compressed_img_g = get_compressed_image(img_g, rank, 'G');
-    Eigen::MatrixXd compressed_img_b = get_compressed_image(img_b, rank, 'B');
-    std::cout
-        << "STEP 2 DONE" << std::endl;
+    Eigen::
+        MatrixXd compressed_img_b = f3.get();
 
     return reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b);
 }
