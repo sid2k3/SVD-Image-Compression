@@ -25,6 +25,7 @@ function handleimage(e) {
 }
 
 function extract_rgb(imageData, img_len, img_width) {
+  // console.log(imageData)
   const rvec = new Module.VectorDouble()
   const gvec = new Module.VectorDouble()
   const bvec = new Module.VectorDouble()
@@ -41,10 +42,33 @@ function extract_rgb(imageData, img_len, img_width) {
   const res = Module.get_compressed_img(
     img_len,
     img_width,
-    200,
+    300,
     rvec,
     gvec,
     bvec
   )
-  console.log(res.size())
+  display_compressed_image(img_len, img_width, res)
+}
+
+function display_compressed_image(img_len, img_width, rgb_pixels) {
+  const canvas = document.querySelector('#compressed_image_canvas')
+  const context = canvas.getContext('2d')
+  canvas.width = img_width
+  canvas.height = img_len
+
+  let new_size = img_len * img_width * 4;
+  const dataArray = new Uint8ClampedArray(new_size);
+  let j = 0;
+  for (let i = 0; i < rgb_pixels.size();) {
+    dataArray[j++] = rgb_pixels.get(i++);
+    dataArray[j++] = rgb_pixels.get(i++);
+    dataArray[j++] = rgb_pixels.get(i++);
+    dataArray[j++] = 255
+
+  }
+
+
+  let imageData = new ImageData(dataArray, img_width, img_len)
+
+  context.putImageData(imageData, 0, 0)
 }
