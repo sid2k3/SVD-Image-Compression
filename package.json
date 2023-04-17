@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "nodemon": "^2.0.22",
+    "vite": "^4.2.1",
+    "vite-plugin-cross-origin-isolation": "^0.1.6",
+    "vite-plugin-eslint": "^1.8.1"
+  },
+  "scripts": {
+    "predev": "yarn buildwasm",
+    "dev": "vite",
+    "prebuild": "yarn buildwasm",
+    "build": "vite build",
+    "buildwasm": "emcc -I external_libs/eigen-3.4.0 -I external_libs/RedSVD/ src/main.cpp --bind  -s ALLOW_MEMORY_GROWTH=1 && mv a.out* public/"
+  },
+  "type": "module",
+  "devDependencies": {
+    "eslint": "^8.38.0"
+  }
+}

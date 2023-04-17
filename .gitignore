@@ -4,7 +4,8 @@
 *.jpeg
 temp.cpp
 *.webp
-public/*.wasm
 *.exe
-public/*.js
-
+public/*
+node_modules/
+dist/*
+dist
