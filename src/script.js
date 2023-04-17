@@ -42,7 +42,7 @@ function extract_rgb(imageData, img_len, img_width) {
   const res = Module.get_compressed_img(
     img_len,
     img_width,
-    300,
+    100,
     rvec,
     gvec,
     bvec
@@ -56,19 +56,19 @@ function display_compressed_image(img_len, img_width, rgb_pixels) {
   canvas.width = img_width
   canvas.height = img_len
 
-  let new_size = img_len * img_width * 4;
-  const dataArray = new Uint8ClampedArray(new_size);
-  let j = 0;
-  for (let i = 0; i < rgb_pixels.size();) {
-    dataArray[j++] = rgb_pixels.get(i++);
-    dataArray[j++] = rgb_pixels.get(i++);
-    dataArray[j++] = rgb_pixels.get(i++);
+  let new_size = img_len * img_width * 4
+  const dataArray = new Uint8ClampedArray(new_size)
+  let j = 0
+  for (let i = 0; i < rgb_pixels.size(); ) {
+    dataArray[j++] = rgb_pixels.get(i++)
+    dataArray[j++] = rgb_pixels.get(i++)
+    dataArray[j++] = rgb_pixels.get(i++)
     dataArray[j++] = 255
-
   }
-
 
   let imageData = new ImageData(dataArray, img_width, img_len)
 
   context.putImageData(imageData, 0, 0)
+  document.querySelector('#compressed_image').src =
+    canvas.toDataURL('image/jpeg')
 }
