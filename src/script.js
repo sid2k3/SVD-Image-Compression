@@ -41,7 +41,7 @@ function extract_rgb(imageData, img_len, img_width) {
   const res = Module.get_compressed_img(
     img_len,
     img_width,
-    10,
+    200,
     rvec,
     gvec,
     bvec
