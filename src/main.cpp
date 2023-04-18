@@ -68,7 +68,7 @@ std::vector<std::vector<double>> get_image_matrix(int width, int length)
     }
     return {img_r, img_g, img_b};
 }
-std::vector<int> reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::MatrixXd &img_b)
+void reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::MatrixXd &img_b, uintptr_t bufferStart, int bufferLength)
 {
     std::vector<double> r_vec;
     std::vector<double> g_vec;
@@ -103,29 +103,39 @@ std::vector<int> reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_
         b_vec.push_back(x);
     }
 
-    std::vector<int> final_img;
-    for (int i{0}; i < r_vec.size(); i++)
+    // bufferStart is a pointer to the start of the buffer allocated in JS
+    // doing this allows us to write to the buffer directly
+    // preventing the need to copy the data to a new vector and then copy it back to the buffer in JS
+    auto final_img = reinterpret_cast<uint8_t *>(bufferStart);
+
+    for (int i{0}, j{0}; i < r_vec.size(); i++)
     {
 
-        final_img.push_back(lround(r_vec[i]));
-        final_img.push_back(lround(g_vec[i]));
-        final_img.push_back(lround(b_vec[i]));
+        final_img[j++] = lround(r_vec[i]);
+        final_img[j++] = lround(g_vec[i]);
+        final_img[j++] = lround(b_vec[i]);
+        final_img[j++] = 255;
     }
-    return final_img;
 }
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MyMatrix;
 // TODO CHANGE FN NAME
-std::vector<int> get_compressed_img(int len, int wd, int rank, std::vector<double> &r_vec, std::vector<double> &g_vec, std::vector<double> &b_vec)
+void get_compressed_img(
+    int len,
+    int wd,
+    int rank,
+    std::vector<double> &r_vec,
+    std::vector<double> &g_vec,
+    std::vector<double> &b_vec,
+    uintptr_t bufferStart,
+    int bufferLength)
 {
-    // std::cout << len << " -> " << wd << std::endl;
+    auto start = std::chrono::steady_clock::now();
 
-    // std::vector<std::vector<double>> rgb_mat = get_image_matrix(len, wd);
     double *r_ptr = r_vec.data();
     double *g_ptr = g_vec.data();
     double *b_ptr = b_vec.data();
 
-    std::cout << "ok" << std::endl;
     size_t nrow = len;
     size_t ncol = wd;
     MyMatrix img_r = Eigen::Map<MyMatrix>(r_ptr, nrow, ncol);
@@ -139,6 +149,7 @@ std::vector<int> get_compressed_img(int len, int wd, int rank, std::vector<doubl
 
     std::future<Eigen::MatrixXd> f2 = std::async(std::launch::async, get_compressed_image, std::ref(img_g), rank, 'G');
     std::future<Eigen::MatrixXd> f3 = std::async(std::launch::async, get_compressed_image, std::ref(img_b), rank, 'B');
+
     std::cout << "threads created" << std::endl;
     Eigen::
         MatrixXd compressed_img_r = f1.get();
@@ -149,7 +160,12 @@ std::vector<int> get_compressed_img(int len, int wd, int rank, std::vector<doubl
     Eigen::
         MatrixXd compressed_img_b = f3.get();
 
-    return reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b);
+    reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b, bufferStart, bufferLength);
+
+    auto end = std::chrono::steady_clock::now();
+    std::cout << "Time taken by C++: "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
+              << " ms" << std::endl;
 }
 
 EMSCRIPTEN_BINDINGS(my_module)
