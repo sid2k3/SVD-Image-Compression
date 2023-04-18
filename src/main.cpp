@@ -7,6 +7,7 @@
 #include <thread>
 #include <future>
 #include <emscripten/bind.h>
+#include <stdio.h>
 
 using namespace emscripten;
 
@@ -14,7 +15,6 @@ Eigen::MatrixXd get_compressed_image(Eigen::MatrixXd &mat, int rank, char compon
 {
 
     RedSVD::RedSVD<Eigen::MatrixXd> mtr(mat, rank);
-    std::cout << mat.size() << std::endl;
 
     Eigen::MatrixXd U = mtr.matrixU();
 
@@ -23,7 +23,8 @@ Eigen::MatrixXd get_compressed_image(Eigen::MatrixXd &mat, int rank, char compon
     V.transposeInPlace();
 
     Eigen::MatrixXd compressed = U * S * V;
-    std::cout << component << " component compressed" << std::endl;
+
+    printf("%c component compressed\n", component);
     return compressed;
 }
 
@@ -150,14 +151,15 @@ void get_compressed_img(
     MyMatrix img_g = Eigen::Map<MyMatrix>(g_ptr, nrow, ncol);
     MyMatrix img_b = Eigen::Map<MyMatrix>(b_ptr, nrow, ncol);
 
-    std::cout << "STEP 1 DONE" << std::endl;
+    printf("STEP 1 DONE\n");
 
-    std::future<Eigen::MatrixXd> f1 = std::async(std::launch::async, get_compressed_image, std::ref(img_r), rank, 'R');
+    std::future<Eigen::MatrixXd>
+        f1 = std::async(std::launch::async, get_compressed_image, std::ref(img_r), rank, 'R');
 
     std::future<Eigen::MatrixXd> f2 = std::async(std::launch::async, get_compressed_image, std::ref(img_g), rank, 'G');
     std::future<Eigen::MatrixXd> f3 = std::async(std::launch::async, get_compressed_image, std::ref(img_b), rank, 'B');
 
-    std::cout << "threads created" << std::endl;
+    printf("threads created\n");
     Eigen::
         MatrixXd compressed_img_r = f1.get();
 
@@ -170,9 +172,8 @@ void get_compressed_img(
     reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b, bufferStart, bufferLength);
 
     auto end = std::chrono::steady_clock::now();
-    std::cout << "Time taken by C++: "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
-              << " ms" << std::endl;
+
+    printf("Time taken by C++: %lld ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
 
     // free the memory to prevent memory leaks
     delete[] r_ptr;
