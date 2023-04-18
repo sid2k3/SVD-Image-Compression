@@ -34,51 +34,48 @@ function handleimage(e) {
 }
 
 function extract_rgb(imageData, img_len, img_width) {
-  const rvec = new Module.VectorDouble()
-  const gvec = new Module.VectorDouble()
-  const bvec = new Module.VectorDouble()
-  let i = 0
-
-  while (i < imageData.data.length) {
-    rvec.push_back(imageData.data[i++])
-    gvec.push_back(imageData.data[i++])
-    bvec.push_back(imageData.data[i++])
-
-    i++
-  }
-  console.log(rvec.size())
-
   // we have a total of 4 bytes per pixel
   // and we have img_len * img_width pixels
   // so total length is img_len * img_width * 4
   const bufferLength = img_len * img_width * 4
 
+  // this is for the input image
+  // allocate memory on the WASM heap based on the image data
+  // which is retrieved from the canvas
+  const inputImageBufferStart = Module._malloc(bufferLength * 1)
+  Module.HEAPU8.set(imageData.data, inputImageBufferStart)
+
+  // this is for the output image
   // allocate memory on the heap(this can be accessed from within C++ preventing an expensive copy)
   // and get a pointer to it(this is the address of the first byte of the allocated memory)
   // since the max value of each channel is 256, we have 1 byte per channel
-  const bufferStart = Module._malloc(bufferLength * 1)
+  const outputImageBufferStart = Module._malloc(bufferLength * 1)
 
   // this returns nothing - it just modifies the buffer
   Module.get_compressed_img(
     img_len,
     img_width,
-    10,
-    rvec,
-    gvec,
-    bvec,
-    bufferStart,
+    200,
+    inputImageBufferStart,
+    outputImageBufferStart,
     bufferLength
   )
 
   // create a new Uint8Array view on the same memory
   // and set the values of the view to the values of the heap
   imageData.data.set(
-    Module.HEAPU8.subarray(bufferStart, bufferStart + bufferLength),
-    0
+    Module.HEAPU8.subarray(
+      outputImageBufferStart,
+      outputImageBufferStart + bufferLength
+    )
   )
 
   // and finally, show the image
   display_compressed_image(img_len, img_width, imageData)
+
+  // and now, free the memory to prevent memory leaks
+  Module._free(inputImageBufferStart)
+  Module._free(outputImageBufferStart)
 }
 
 function display_compressed_image(img_len, img_width, imageData) {

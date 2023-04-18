@@ -124,17 +124,24 @@ void get_compressed_img(
     int len,
     int wd,
     int rank,
-    std::vector<double> &r_vec,
-    std::vector<double> &g_vec,
-    std::vector<double> &b_vec,
+    uintptr_t inputImageBufferStart,
     uintptr_t bufferStart,
     int bufferLength)
 {
     auto start = std::chrono::steady_clock::now();
 
-    double *r_ptr = r_vec.data();
-    double *g_ptr = g_vec.data();
-    double *b_ptr = b_vec.data();
+    auto inputImagePixels = reinterpret_cast<uint8_t *>(inputImageBufferStart);
+    double *r_ptr = new double[len * wd];
+    double *g_ptr = new double[len * wd];
+    double *b_ptr = new double[len * wd];
+
+    for (int i{0}, j{0}; i < len * wd; i++)
+    {
+        r_ptr[i] = inputImagePixels[j++];
+        g_ptr[i] = inputImagePixels[j++];
+        b_ptr[i] = inputImagePixels[j++];
+        j++;
+    }
 
     size_t nrow = len;
     size_t ncol = wd;
@@ -166,6 +173,11 @@ void get_compressed_img(
     std::cout << "Time taken by C++: "
               << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
               << " ms" << std::endl;
+
+    // free the memory to prevent memory leaks
+    delete[] r_ptr;
+    delete[] g_ptr;
+    delete[] b_ptr;
 }
 
 EMSCRIPTEN_BINDINGS(my_module)
