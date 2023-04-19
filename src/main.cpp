@@ -69,7 +69,7 @@ std::vector<std::vector<double>> get_image_matrix(int width, int length)
     }
     return {img_r, img_g, img_b};
 }
-void reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::MatrixXd &img_b, uintptr_t bufferStart, int bufferLength)
+void reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::MatrixXd &img_b, uintptr_t bufferStart)
 {
     std::vector<double> r_vec;
     std::vector<double> g_vec;
@@ -125,13 +125,11 @@ void get_compressed_img(
     int len,
     int wd,
     int rank,
-    uintptr_t inputImageBufferStart,
-    uintptr_t bufferStart,
-    int bufferLength)
+    uintptr_t imageBufferStart)
 {
     auto start = std::chrono::steady_clock::now();
 
-    auto inputImagePixels = reinterpret_cast<uint8_t *>(inputImageBufferStart);
+    auto inputImagePixels = reinterpret_cast<uint8_t *>(imageBufferStart);
     double *r_ptr = new double[len * wd];
     double *g_ptr = new double[len * wd];
     double *b_ptr = new double[len * wd];
@@ -169,7 +167,7 @@ void get_compressed_img(
     Eigen::
         MatrixXd compressed_img_b = f3.get();
 
-    reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b, bufferStart, bufferLength);
+    reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b, imageBufferStart);
 
     auto end = std::chrono::steady_clock::now();
 
