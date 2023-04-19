@@ -14,15 +14,11 @@ self.importScripts('/a.out.js')
 // onmessage being overwritten by ours. This is a hacky way to prevent that
 if (!onmessage) {
   onmessage = (e) => {
-    console.log(e)
-
-    console.log('Image Compression request received from main')
-
-    const { img_height, img_width, buffer } = e.data
+    const { height, width, buffer } = e.data
 
     let bufferArray = new Uint8ClampedArray(buffer)
 
-    extract_rgb(bufferArray, img_height, img_width)
+    extract_rgb(bufferArray, height, width)
 
     //Now bufferArray holds the compressed image
     //send message to main to display the compressed image
@@ -34,14 +30,11 @@ function extract_rgb(bufferArray, img_height, img_width) {
   // and we have img_len * img_width pixels
   // so total length is img_len * img_width * 4
   const bufferLength = img_height * img_width * 4
-  console.log(bufferLength)
 
   // allocate memory on the heap(this can be accessed from within C++ preventing an expensive copy)
   // and get a pointer to it(this is the address of the first byte of the allocated memory)
   // since the max value of each channel is 256, we have 1 byte per channel
   const imageBufferStart = Module._malloc(bufferLength * 1)
-  console.log({ bufferLength })
-  console.log(imageBufferStart)
   Module.HEAPU8.set(bufferArray, imageBufferStart)
 
   // this returns nothing - it just modifies the buffer

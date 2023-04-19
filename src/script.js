@@ -1,16 +1,18 @@
 const myWorker = new Worker('src/worker.js')
 
-const filesel = document.querySelector('#fileselect')
+const fileSelector = document.querySelector('#fileselect')
 const outputImage = document.querySelector('#compressed_image')
 
-filesel.addEventListener('change', handleimage)
+fileSelector.addEventListener('change', handleImage)
 
-function handleimage(e) {
-  const fileinp = e.target
+function handleImage(e) {
+  const inputFile = e.target
+  const initialFileSize = inputFile.files[0].size / 1024
+  console.log(`Initial size: ${Math.round(initialFileSize, 2)} KB`)
 
-  if (fileinp.files.length) {
+  if (inputFile.files.length) {
     const img = document.createElement('img')
-    img.src = URL.createObjectURL(fileinp.files[0])
+    img.src = URL.createObjectURL(inputFile.files[0])
     const canvas = document.querySelector('#canvas')
     const context = canvas.getContext('2d')
 
@@ -23,36 +25,33 @@ function handleimage(e) {
 
       const imageData = context.getImageData(0, 0, img.width, img.height)
 
-      //Create a shared buffer to hold image data
+      // Create a shared buffer to hold image data
       // we have a total of 4 bytes per pixel
       // and we have img_len * img_width pixels
       // so total length is img_len * img_width * 4
       const buffer = new SharedArrayBuffer(img.width * img.height * 4)
 
-      //get image data in form of uint8 clamped array
+      // get image data in form of uint8 clamped array
       const imageDataArray = imageData.data
 
       let bufferArray = new Uint8ClampedArray(buffer)
 
-      //set buffer array contents to image array contents
+      // set buffer array contents to image array contents
       bufferArray.set(imageDataArray)
 
-      //disable button
-
+      // disable button
       myWorker.postMessage({
-        img_width: img.width,
-        img_height: img.height,
+        width: img.width,
+        height: img.height,
         buffer: buffer,
       })
 
-      myWorker.onmessage = (e) => {
-        console.log('Message received from worker')
-        console.log(e.data)
+      myWorker.onmessage = () => {
         const endTime = Date.now()
 
         console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
 
-        //set underlying data of imageData object of canvas to bufferArray which contains the compressed image
+        // set underlying data of imageData object of canvas to bufferArray which contains the compressed image
         imageData.data.set(bufferArray)
 
         display_compressed_image(img.height, img.width, imageData)
@@ -80,5 +79,5 @@ function display_compressed_image(img_height, img_width, imageData) {
       ? 1
       : 0
   let fileSize = base64Length * 0.75 - padding
-  console.log(fileSize)
+  console.log(`Expected size: ${Math.round(fileSize / 1000, 2)} KB`)
 }
