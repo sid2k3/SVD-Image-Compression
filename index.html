@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <script src="a.out.js"></script>
-</head>
-
-<body>
-  <div style="margin: 2em">
-    <input type="file" id="fileselect" accept="image/*" />
-    <div id="imagebox" style="margin: 2em">
-      <canvas style="width:80vw;" id="canvas"></canvas>
-      <img style="width:80vw;" id="compressed_image"></canvas>
+  <body>
+    <div style="margin: 2em">
+      <input type="file" id="fileselect" accept="image/*" />
+      <div id="imagebox" style="margin: 2em">
+        <canvas style="width: 80vw" id="canvas"></canvas>
+        <img style="width: 80vw" id="compressed_image" />
+      </div>
     </div>
-  </div>
-  <script src="src/script.js" type="module"></script>
-</body>
-
+    <script src="src/script.js" type="module"></script>
+  </body>
 </html>

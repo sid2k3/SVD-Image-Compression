@@ -1,4 +1,5 @@
-'use strict'
+const myWorker = new Worker('src/worker.js')
+
 const filesel = document.querySelector('#fileselect')
 const outputImage = document.querySelector('#compressed_image')
 
@@ -20,53 +21,51 @@ function handleimage(e) {
       canvas.height = img.height
       context.drawImage(img, 0, 0)
 
-      extract_rgb(
-        context.getImageData(0, 0, img.width, img.height),
-        img.height,
-        img.width
-      )
+      const imageData = context.getImageData(0, 0, img.width, img.height)
 
-      const endTime = Date.now()
+      //Create a shared buffer to hold image data
+      // we have a total of 4 bytes per pixel
+      // and we have img_len * img_width pixels
+      // so total length is img_len * img_width * 4
+      const buffer = new SharedArrayBuffer(img.width * img.height * 4)
 
-      console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
+      //get image data in form of uint8 clamped array
+      const imageDataArray = imageData.data
+
+      let bufferArray = new Uint8ClampedArray(buffer)
+
+      //set buffer array contents to image array contents
+      bufferArray.set(imageDataArray)
+
+      //disable button
+
+      myWorker.postMessage({
+        img_width: img.width,
+        img_height: img.height,
+        buffer: buffer,
+      })
+
+      myWorker.onmessage = (e) => {
+        console.log('Message received from worker')
+        console.log(e.data)
+        const endTime = Date.now()
+
+        console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
+
+        //set underlying data of imageData object of canvas to bufferArray which contains the compressed image
+        imageData.data.set(bufferArray)
+
+        display_compressed_image(img.height, img.width, imageData)
+      }
     }
   }
 }
 
-function extract_rgb(imageData, img_len, img_width) {
-  // we have a total of 4 bytes per pixel
-  // and we have img_len * img_width pixels
-  // so total length is img_len * img_width * 4
-  const bufferLength = img_len * img_width * 4
-  console.log(bufferLength)
-
-  // allocate memory on the heap(this can be accessed from within C++ preventing an expensive copy)
-  // and get a pointer to it(this is the address of the first byte of the allocated memory)
-  // since the max value of each channel is 256, we have 1 byte per channel
-  const imageBufferStart = Module._malloc(bufferLength * 1)
-  Module.HEAPU8.set(imageData.data, imageBufferStart)
-
-  // this returns nothing - it just modifies the buffer
-  Module.get_compressed_img(img_len, img_width, 200, imageBufferStart)
-
-  // create a new Uint8Array view on the same memory
-  // and set the values of the view to the values of the heap
-  imageData.data.set(
-    Module.HEAPU8.subarray(imageBufferStart, imageBufferStart + bufferLength)
-  )
-
-  // and finally, show the image
-  display_compressed_image(img_len, img_width, imageData)
-
-  // and now, free the memory to prevent memory leaks
-  Module._free(imageBufferStart)
-}
-
-function display_compressed_image(img_len, img_width, imageData) {
+function display_compressed_image(img_height, img_width, imageData) {
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d')
   canvas.width = img_width
-  canvas.height = img_len
+  canvas.height = img_height
 
   context.putImageData(imageData, 0, 0)
 
