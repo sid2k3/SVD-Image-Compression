@@ -2,6 +2,14 @@
 
 ## How to develop
 
+Install the dependencies
+
+```bash
+yarn
+```
+
+Then start the dev server
+
 ```bash
 yarn dev
 ```
