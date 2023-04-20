@@ -45,36 +45,55 @@ function handleImage(e) {
       //since we are creating a single buffer to hold multiple(numberOfRanks) compressed images
 
       // therefore total length is img_len * img_width * 4*numberOfRanks
-      const buffer = new SharedArrayBuffer(
+      const outputBuffer = new SharedArrayBuffer(
         img.width * img.height * 4 * numberOfRanks
       )
 
       // get image data in form of uint8 clamped array
       const imageDataArray = imageData.data
 
-      let bufferArray = new Uint8ClampedArray(buffer)
+      let bufferArray = new Uint8ClampedArray(outputBuffer)
+      let inputBuffer = new SharedArrayBuffer(image_size)
+      let inputBufferArray = new Uint8ClampedArray(inputBuffer)
 
       // set buffer array contents to image array contents
-      bufferArray.set(imageDataArray)
+      inputBufferArray.set(imageDataArray)
 
       // disable button
       myWorker.postMessage({
         width: img.width,
         height: img.height,
-        ranks: ranks,
-        buffer: buffer,
+        ranks: [ranks[0]],
+        outputBuffer,
+        preview: true,
+        inputBuffer,
       })
 
-      myWorker.onmessage = () => {
-        
-        const endTime = Date.now()
+      myWorker.onmessage = (e) => {
+        if (e.data.type === 'previewDone') {
+          console.log('done with preview')
+          imageData.data.set(bufferArray.subarray(0, image_size))
+          display_compressed_image(img.height, img.width, imageData)
+          myWorker.postMessage({
+            width: img.width,
+            height: img.height,
+            ranks: ranks,
+            outputBuffer,
+            inputBuffer,
+            preview: false,
+          })
+        } else {
+          const endTime = Date.now()
 
-        console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
+          console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
 
-        // set underlying data of imageData object of canvas to bufferArray which contains the compressed image
-        imageData.data.set(bufferArray.subarray(image_size * 5, image_size * 6))
+          // set underlying data of imageData object of canvas to bufferArray which contains the compressed image
+          imageData.data.set(
+            bufferArray.subarray(image_size * 5, image_size * 6)
+          )
 
-        display_compressed_image(img.height, img.width, imageData)
+          display_compressed_image(img.height, img.width, imageData)
+        }
       }
     }
   }
