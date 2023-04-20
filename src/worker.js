@@ -14,31 +14,43 @@ self.importScripts('/a.out.js')
 // onmessage being overwritten by ours. This is a hacky way to prevent that
 if (!onmessage) {
   onmessage = (e) => {
-    const { height, width, buffer } = e.data
+    const { height, width, ranks, buffer } = e.data
 
     let bufferArray = new Uint8ClampedArray(buffer)
 
-    extract_rgb(bufferArray, height, width)
+    compress(bufferArray, height, width, ranks)
 
     //Now bufferArray holds the compressed image
     //send message to main to display the compressed image
     postMessage('Display Compressed Image')
   }
 }
-function extract_rgb(bufferArray, img_height, img_width) {
+function compress(bufferArray, img_height, img_width, ranks) {
   // we have a total of 4 bytes per pixel
   // and we have img_len * img_width pixels
-  // so total length is img_len * img_width * 4
-  const bufferLength = img_height * img_width * 4
+
+  //since we are creating a single buffer to hold multiple(numberOfRanks) compressed images
+
+  // therefore total length is img_len * img_width * 4*numberOfRanks
+
+  const bufferLength = img_height * img_width * 4 * ranks.length
 
   // allocate memory on the heap(this can be accessed from within C++ preventing an expensive copy)
   // and get a pointer to it(this is the address of the first byte of the allocated memory)
   // since the max value of each channel is 256, we have 1 byte per channel
+
+  //Create C++ vector from list of ranks
+  const ranksVector = new Module.VectorInt()
+  for (let rank of ranks) {
+    ranksVector.push_back(rank)
+  }
+
   const imageBufferStart = Module._malloc(bufferLength * 1)
   Module.HEAPU8.set(bufferArray, imageBufferStart)
 
   // this returns nothing - it just modifies the buffer
-  Module.get_compressed_img(img_height, img_width, 200, imageBufferStart)
+  Module.my_main(img_height, img_width, ranksVector, imageBufferStart)
+  console.log('MAIN ENDED FINALLY')
 
   // create a new Uint8Array view on the same memory
   // and set the values of the view to the values of the heap

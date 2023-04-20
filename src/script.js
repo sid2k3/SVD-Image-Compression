@@ -1,5 +1,8 @@
 const myWorker = new Worker('src/worker.js')
 
+// number of ranks for which compressed image is to be computed
+const numberOfRanks = 6
+
 const fileSelector = document.querySelector('#fileselect')
 const outputImage = document.querySelector('#compressed_image')
 
@@ -21,17 +24,30 @@ function handleImage(e) {
     img.onload = function () {
       const startTime = Date.now()
 
+      const ranks = []
+      const max_rank = Math.min(img.height, img.width)
+      for (let i = 1; i <= numberOfRanks; i++) {
+        ranks.push(max_rank * (i / 10))
+        //calculates new ranks from 10% of original rank to number of ranks % of original ranks (currently 60%)
+
+        //(i/10)*max_rank for i=10 would imply multiplying by 0.1 or 10%
+      }
       canvas.width = img.width
       canvas.height = img.height
       context.drawImage(img, 0, 0)
-
+      const image_size = img.width * img.height * 4
       const imageData = context.getImageData(0, 0, img.width, img.height)
 
       // Create a shared buffer to hold image data
       // we have a total of 4 bytes per pixel
       // and we have img_len * img_width pixels
-      // so total length is img_len * img_width * 4
-      const buffer = new SharedArrayBuffer(img.width * img.height * 4)
+
+      //since we are creating a single buffer to hold multiple(numberOfRanks) compressed images
+
+      // therefore total length is img_len * img_width * 4*numberOfRanks
+      const buffer = new SharedArrayBuffer(
+        img.width * img.height * 4 * numberOfRanks
+      )
 
       // get image data in form of uint8 clamped array
       const imageDataArray = imageData.data
@@ -45,16 +61,18 @@ function handleImage(e) {
       myWorker.postMessage({
         width: img.width,
         height: img.height,
+        ranks: ranks,
         buffer: buffer,
       })
 
       myWorker.onmessage = () => {
+        
         const endTime = Date.now()
 
         console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
 
         // set underlying data of imageData object of canvas to bufferArray which contains the compressed image
-        imageData.data.set(bufferArray)
+        imageData.data.set(bufferArray.subarray(image_size * 5, image_size * 6))
 
         display_compressed_image(img.height, img.width, imageData)
       }
