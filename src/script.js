@@ -14,7 +14,9 @@ function handleImage(e) {
     const img = document.createElement('img')
     img.src = URL.createObjectURL(inputFile.files[0])
     const canvas = document.querySelector('#canvas')
-    const context = canvas.getContext('2d')
+    const context = canvas.getContext('2d', {
+      willReadFrequently: true,
+    })
 
     img.onload = function () {
       const startTime = Date.now()
