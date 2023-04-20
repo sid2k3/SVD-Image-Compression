@@ -28,81 +28,23 @@ Eigen::MatrixXd get_compressed_image(Eigen::MatrixXd &mat, int rank, char compon
     return compressed;
 }
 
-std::vector<std::vector<double>> get_image_matrix(int width, int length)
+double roundValue(double value)
 {
-
-    std::vector<int> pixel_sequence;
-
-    std::ifstream myfile("mat.txt");
-
-    int temp;
-    while (myfile >> temp)
+    if (value > 255)
     {
-        pixel_sequence.push_back(temp);
+        return 255;
     }
-
-    std::vector<double> img_r;
-    std::vector<double> img_g;
-    std::vector<double> img_b;
-
-    int cur_pos = 0;
-    while (img_r.size() != length * width)
+    else if (value < 0)
     {
-
-        img_r.push_back(pixel_sequence[cur_pos]);
-        cur_pos += 3;
+        return 0;
     }
-
-    cur_pos = 1;
-    while (img_g.size() != length * width)
-    {
-
-        img_g.push_back(pixel_sequence[cur_pos]);
-        cur_pos += 3;
-    }
-    cur_pos = 2;
-    while (img_b.size() != length * width)
-    {
-
-        img_b.push_back(pixel_sequence[cur_pos]);
-        cur_pos += 3;
-    }
-    return {img_r, img_g, img_b};
+    return lround(value);
 }
 void reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::MatrixXd &img_b, uintptr_t bufferStart)
 {
-    std::vector<double> r_vec;
-    std::vector<double> g_vec;
-    std::vector<double> b_vec;
-
-    for (auto &x : img_r.reshaped())
-    {
-        if (x > 255)
-            x = 255;
-
-        if (x < 0)
-            x = 0;
-        r_vec.push_back(x);
-    }
-    for (auto &x : img_g.reshaped())
-    {
-        if (x > 255)
-            x = 255;
-
-        if (x < 0)
-            x = 0;
-        g_vec.push_back(x);
-    }
-
-    for (auto &x : img_b.reshaped())
-    {
-        if (x > 255)
-            x = 255;
-
-        if (x < 0)
-            x = 0;
-        b_vec.push_back(x);
-    }
+    auto r_vec = img_r.reshaped();
+    auto g_vec = img_g.reshaped();
+    auto b_vec = img_b.reshaped();
 
     // bufferStart is a pointer to the start of the buffer allocated in JS
     // doing this allows us to write to the buffer directly
@@ -112,9 +54,9 @@ void reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::Ma
     for (int i{0}, j{0}; i < r_vec.size(); i++)
     {
 
-        final_img[j++] = lround(r_vec[i]);
-        final_img[j++] = lround(g_vec[i]);
-        final_img[j++] = lround(b_vec[i]);
+        final_img[j++] = roundValue(r_vec[i]);
+        final_img[j++] = roundValue(g_vec[i]);
+        final_img[j++] = roundValue(b_vec[i]);
         final_img[j++] = 255;
     }
 }
@@ -181,28 +123,5 @@ void get_compressed_img(
 
 EMSCRIPTEN_BINDINGS(my_module)
 {
-    register_vector<int>("VectorInt");
-    register_vector<double>("VectorDouble");
-    register_vector<std::vector<int>>("VectorVectorInt");
     function("get_compressed_img", &get_compressed_img);
 }
-
-// int main()
-// {
-//     std::vector<double> vr;
-//     std::vector<double> vg;
-//     std::vector<double> vb;
-
-//     for (int i{0}; i < 9; i++)
-//     {
-//         vr.push_back(10);
-//         vg.push_back(40);
-//         vb.push_back(240);
-//     }
-
-//     std::vector<int> temp = get_compressed_img(3, 3, 1, vr, vg, vb);
-//     for (auto &e : temp)
-//         std::cout << e << " ";
-
-//     std::cout << std::endl;
-// }
