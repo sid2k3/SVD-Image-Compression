@@ -19,3 +19,9 @@ yarn dev
 ```bash
 yarn build
 ```
+
+If you wish to start a production server
+
+```bash
+yarn serve
+```

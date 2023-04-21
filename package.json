@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "nodemon": "^2.0.22",
+    "serve": "^14.2.0",
     "vite": "^4.2.1",
     "vite-plugin-cross-origin-isolation": "^0.1.6",
     "vite-plugin-eslint": "^1.8.1"
@@ -11,7 +12,9 @@
     "prebuild": "yarn buildwasm",
     "build": "vite build",
     "profile": "emcc -I vendor/eigen-3.4.0 -I vendor/RedSVD/ src/main.cpp --bind -s PTHREAD_POOL_SIZE=25 -pthread -O2 -s ALLOW_MEMORY_GROWTH=1 --profiling && mv a.out* public/ && vite",
-    "buildwasm": "emcc -I vendor/eigen-3.4.0 -I vendor/RedSVD/ src/main.cpp --bind -s PTHREAD_POOL_SIZE=25 -pthread -O2 -s ALLOW_MEMORY_GROWTH=1 && mv a.out* public/"
+    "buildwasm": "emcc -I vendor/eigen-3.4.0 -I vendor/RedSVD/ src/main.cpp --bind -s PTHREAD_POOL_SIZE=25 -pthread -O2 -s ALLOW_MEMORY_GROWTH=1 && mv a.out* public/",
+    "preserve": "yarn build",
+    "serve": "serve dist/"
   },
   "type": "module",
   "devDependencies": {
