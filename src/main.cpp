@@ -91,8 +91,6 @@ void compress(
 void run(int len, int width, std::vector<int> ranks, uintptr_t imageBufferStart)
 {
 
-    // auto start = std::chrono::steady_clock::now();
-
     auto inputImagePixels = reinterpret_cast<uint8_t *>(imageBufferStart);
     double *r_ptr = new double[len * width];
     double *g_ptr = new double[len * width];
@@ -127,7 +125,6 @@ void run(int len, int width, std::vector<int> ranks, uintptr_t imageBufferStart)
     {
 
         rank = ranks[cur];
-        // printf("ok idx:%d rank:%d  offset:%lld \n", cur, rank, offset);
         uintptr_t outputimageBuffer = imageBufferStart + offset;
 
         temp_future_vector.emplace_back(std::async(std::launch::async, compress, rank, std::ref(img_r), std::ref(img_g), std::ref(img_b), outputimageBuffer));
@@ -138,10 +135,6 @@ void run(int len, int width, std::vector<int> ranks, uintptr_t imageBufferStart)
     delete[] r_ptr;
     delete[] g_ptr;
     delete[] b_ptr;
-
-    // auto end = std::chrono::steady_clock::now();
-
-    // printf("Time taken by C++  %lld ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
 }
 
 EMSCRIPTEN_BINDINGS(my_module)
