@@ -11,10 +11,17 @@ fileSelector.addEventListener('change', handleImage)
 function handleImage(e) {
   const inputFile = e.target
 
+  //return if no file is selected
+  if (inputFile.files.length === 0) {
+    return
+  }
+
   const initialFileSize = inputFile.files[0].size / 1024
   console.log(`Initial size: ${Math.round(initialFileSize, 2)} KB`)
 
   if (inputFile.files.length) {
+    //remove previous compressed image
+    outputImage.src = '#'
     const img = document.createElement('img')
     img.src = URL.createObjectURL(inputFile.files[0])
     const canvas = document.querySelector('#canvas')
@@ -80,7 +87,6 @@ function handleImage(e) {
 
       myWorker.onmessage = (e) => {
         if (e.data.type === 'previewDone') {
-          
           imageData.data.set(bufferArray.subarray(0, image_size))
           display_compressed_image(img.height, img.width, imageData)
           myWorker.postMessage({
