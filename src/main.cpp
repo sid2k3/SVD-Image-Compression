@@ -62,36 +62,11 @@ void reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::Ma
 }
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MyMatrix;
-// TODO CHANGE FN NAME
-void get_compressed_img(
-    int len,
-    int wd,
+
+void compress(
     int rank,
-    uintptr_t imageBufferStart)
+    MyMatrix &img_r, MyMatrix &img_g, MyMatrix &img_b, uintptr_t outputImageBufferStart)
 {
-    auto start = std::chrono::steady_clock::now();
-
-    auto inputImagePixels = reinterpret_cast<uint8_t *>(imageBufferStart);
-    double *r_ptr = new double[len * wd];
-    double *g_ptr = new double[len * wd];
-    double *b_ptr = new double[len * wd];
-
-    for (int i{0}, j{0}; i < len * wd; i++)
-    {
-        r_ptr[i] = inputImagePixels[j++];
-        g_ptr[i] = inputImagePixels[j++];
-        b_ptr[i] = inputImagePixels[j++];
-        j++;
-    }
-
-    size_t nrow = len;
-    size_t ncol = wd;
-    MyMatrix img_r = Eigen::Map<MyMatrix>(r_ptr, nrow, ncol);
-
-    MyMatrix img_g = Eigen::Map<MyMatrix>(g_ptr, nrow, ncol);
-    MyMatrix img_b = Eigen::Map<MyMatrix>(b_ptr, nrow, ncol);
-
-    printf("STEP 1 DONE\n");
 
     std::future<Eigen::MatrixXd>
         f1 = std::async(std::launch::async, get_compressed_image, std::ref(img_r), rank, 'R');
@@ -99,7 +74,7 @@ void get_compressed_img(
     std::future<Eigen::MatrixXd> f2 = std::async(std::launch::async, get_compressed_image, std::ref(img_g), rank, 'G');
     std::future<Eigen::MatrixXd> f3 = std::async(std::launch::async, get_compressed_image, std::ref(img_b), rank, 'B');
 
-    printf("threads created\n");
+    printf("C++ threads created\n");
     Eigen::
         MatrixXd compressed_img_r = f1.get();
 
@@ -109,12 +84,53 @@ void get_compressed_img(
     Eigen::
         MatrixXd compressed_img_b = f3.get();
 
-    reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b, imageBufferStart);
+    reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b, outputImageBufferStart);
+}
 
-    auto end = std::chrono::steady_clock::now();
+// Output of each rank will have its own corressponding image buffer
+void run(int len, int width, std::vector<int> ranks, uintptr_t imageBufferStart)
+{
 
-    printf("Time taken by C++: %lld ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+    auto inputImagePixels = reinterpret_cast<uint8_t *>(imageBufferStart);
+    double *r_ptr = new double[len * width];
+    double *g_ptr = new double[len * width];
+    double *b_ptr = new double[len * width];
 
+    for (int i{0}, j{0}; i < len * width; i++)
+    {
+        r_ptr[i] = inputImagePixels[j++];
+        g_ptr[i] = inputImagePixels[j++];
+        b_ptr[i] = inputImagePixels[j++];
+        j++;
+    }
+
+    size_t nrow = len;
+    size_t ncol = width;
+    MyMatrix img_r = Eigen::Map<MyMatrix>(r_ptr, nrow, ncol);
+
+    MyMatrix img_g = Eigen::Map<MyMatrix>(g_ptr, nrow, ncol);
+    MyMatrix img_b = Eigen::Map<MyMatrix>(b_ptr, nrow, ncol);
+    printf("Eigen Matrices created\n");
+
+    int rank = 0;
+    long long size = len * width * 4;
+    // offset denotes the location in memory where the output image is to be written
+    // after each iteration the offset would get incremented by the size of image in bytes
+    long long offset = 0;
+    // temporary vector to hold future values of async functions- this is done to remove blocking behaviour
+    std::vector<std::future<void>> temp_future_vector;
+    // Creating separate threads for each rank computation
+
+    for (int cur = 0; cur < ranks.size(); cur++)
+    {
+
+        rank = ranks[cur];
+        uintptr_t outputimageBuffer = imageBufferStart + offset;
+
+        temp_future_vector.emplace_back(std::async(std::launch::async, compress, rank, std::ref(img_r), std::ref(img_g), std::ref(img_b), outputimageBuffer));
+
+        offset += size;
+    }
     // free the memory to prevent memory leaks
     delete[] r_ptr;
     delete[] g_ptr;
@@ -123,5 +139,8 @@ void get_compressed_img(
 
 EMSCRIPTEN_BINDINGS(my_module)
 {
-    function("get_compressed_img", &get_compressed_img);
+    register_vector<int>("VectorInt");
+    register_vector<double>("VectorDouble");
+    register_vector<std::vector<int>>("VectorVectorInt");
+    function("run", &run);
 }
