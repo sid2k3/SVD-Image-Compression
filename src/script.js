@@ -1,4 +1,4 @@
-const myWorker = new Worker('src/worker.js')
+const myWorker = new Worker(new URL('./worker.js', import.meta.url))
 
 // number of ranks for which compressed image is to be computed
 const numberOfRanks = 6
