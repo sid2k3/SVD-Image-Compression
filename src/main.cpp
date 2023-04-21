@@ -68,14 +68,13 @@ void compress(
     MyMatrix &img_r, MyMatrix &img_g, MyMatrix &img_b, uintptr_t outputImageBufferStart)
 {
 
-    printf("compress called\n");
     std::future<Eigen::MatrixXd>
         f1 = std::async(std::launch::async, get_compressed_image, std::ref(img_r), rank, 'R');
 
     std::future<Eigen::MatrixXd> f2 = std::async(std::launch::async, get_compressed_image, std::ref(img_g), rank, 'G');
     std::future<Eigen::MatrixXd> f3 = std::async(std::launch::async, get_compressed_image, std::ref(img_b), rank, 'B');
 
-    printf("threads created\n");
+    printf("C++ threads created\n");
     Eigen::
         MatrixXd compressed_img_r = f1.get();
 
@@ -89,10 +88,9 @@ void compress(
 }
 
 // Output of each rank will have its own corressponding image buffer
-void my_main(int len, int width, std::vector<int> ranks, uintptr_t imageBufferStart)
+void run(int len, int width, std::vector<int> ranks, uintptr_t imageBufferStart)
 {
 
-    printf("C++ Main Started\n");
     // auto start = std::chrono::steady_clock::now();
 
     auto inputImagePixels = reinterpret_cast<uint8_t *>(imageBufferStart);
@@ -114,7 +112,7 @@ void my_main(int len, int width, std::vector<int> ranks, uintptr_t imageBufferSt
 
     MyMatrix img_g = Eigen::Map<MyMatrix>(g_ptr, nrow, ncol);
     MyMatrix img_b = Eigen::Map<MyMatrix>(b_ptr, nrow, ncol);
-    printf("STEP 1 DONE\n");
+    printf("Eigen Matrices created\n");
 
     int rank = 0;
     long long size = len * width * 4;
@@ -144,8 +142,6 @@ void my_main(int len, int width, std::vector<int> ranks, uintptr_t imageBufferSt
     // auto end = std::chrono::steady_clock::now();
 
     // printf("Time taken by C++  %lld ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
-
-    printf("C++ Main Ended\n");
 }
 
 EMSCRIPTEN_BINDINGS(my_module)
@@ -153,5 +149,5 @@ EMSCRIPTEN_BINDINGS(my_module)
     register_vector<int>("VectorInt");
     register_vector<double>("VectorDouble");
     register_vector<std::vector<int>>("VectorVectorInt");
-    function("my_main", &my_main);
+    function("run", &run);
 }

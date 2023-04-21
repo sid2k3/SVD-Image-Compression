@@ -67,8 +67,8 @@ function compress(
   Module.HEAPU8.set(inputBufferArray, imageBufferStart)
 
   // this returns nothing - it just modifies the buffer
-  Module.my_main(img_height, img_width, ranksVector, imageBufferStart)
-  console.log('MAIN ENDED FINALLY')
+  Module.run(img_height, img_width, ranksVector, imageBufferStart)
+ 
 
   // create a new Uint8Array view on the same memory
   // and set the values of the view to the values of the heap

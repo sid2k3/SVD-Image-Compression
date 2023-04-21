@@ -80,7 +80,7 @@ function handleImage(e) {
 
       myWorker.onmessage = (e) => {
         if (e.data.type === 'previewDone') {
-          console.log('done with preview')
+          
           imageData.data.set(bufferArray.subarray(0, image_size))
           display_compressed_image(img.height, img.width, imageData)
           myWorker.postMessage({
