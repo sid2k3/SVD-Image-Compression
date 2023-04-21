@@ -10,6 +10,7 @@ fileSelector.addEventListener('change', handleImage)
 
 function handleImage(e) {
   const inputFile = e.target
+
   const initialFileSize = inputFile.files[0].size / 1024
   console.log(`Initial size: ${Math.round(initialFileSize, 2)} KB`)
 
@@ -27,8 +28,16 @@ function handleImage(e) {
       const ranks = []
       const max_rank = Math.min(img.height, img.width)
       for (let i = 1; i <= numberOfRanks; i++) {
-        ranks.push(max_rank * (i / 10))
-        //calculates new ranks from 10% of original rank to number of ranks % of original ranks (currently 60%)
+        ranks.push(Math.min(max_rank * (i / 10), 70 * i))
+
+        //calculates new ranks from 10% of original rank to number of ranks % of original ranks (currently 60%).
+
+        /*
+        Math.min(max_rank * (i / 10), 70 * i) imposes an upper limit on rank.
+        This is done to calculate lower ranks for high dimensional images.
+        In a 4k image 10% would imply a rank around 200 but due to our upper limit
+        we calculate rank 70 and so on. 
+        */
 
         //(i/10)*max_rank for i=10 would imply multiplying by 0.1 or 10%
       }

@@ -93,7 +93,7 @@ void my_main(int len, int width, std::vector<int> ranks, uintptr_t imageBufferSt
 {
 
     printf("C++ Main Started\n");
-    auto start = std::chrono::steady_clock::now();
+    // auto start = std::chrono::steady_clock::now();
 
     auto inputImagePixels = reinterpret_cast<uint8_t *>(imageBufferStart);
     double *r_ptr = new double[len * width];
@@ -141,9 +141,9 @@ void my_main(int len, int width, std::vector<int> ranks, uintptr_t imageBufferSt
     delete[] g_ptr;
     delete[] b_ptr;
 
-    auto end = std::chrono::steady_clock::now();
+    // auto end = std::chrono::steady_clock::now();
 
-    printf("Time taken by C++ for rank %d : %lld ms\n", rank, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
+    // printf("Time taken by C++  %lld ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count());
 
     printf("C++ Main Ended\n");
 }
