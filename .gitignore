@@ -5,7 +5,8 @@
 temp.cpp
 *.webp
 *.exe
-public/*
+public/*.js
+public/*.wasm
 node_modules/
 dist/*
 dist

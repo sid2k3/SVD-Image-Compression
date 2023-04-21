@@ -1,5 +1,8 @@
-if (!Module) {
-  var Module = {
+if (!globalThis.Module) {
+  // I do it this way instead of using var since rollup will otherwise
+  // minimize the variable name and it will break the code
+  globalThis.Module = {
+    /* eslint-enable */
     locateFile: (path) => {
       // the emcc glue code will look for the wasm file in the same directory as the js file
       // we override this behavior by returning the path to the public directory
@@ -68,7 +71,6 @@ function compress(
 
   // this returns nothing - it just modifies the buffer
   Module.run(img_height, img_width, ranksVector, imageBufferStart)
- 
 
   // create a new Uint8Array view on the same memory
   // and set the values of the view to the values of the heap
