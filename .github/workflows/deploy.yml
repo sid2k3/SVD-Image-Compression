@@ -1,0 +1,40 @@
+on: [push]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+
+    name: Publish to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set Node.js 16.20.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.20.0
+
+      - name: Setup emsdk
+        uses: mymindstorm/setup-emsdk@v11
+        with:
+          version: 3.1.5
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+
+      - name: Run build
+        run: yarn build
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 30361d590ce9e98a9ca9ad2b17b795c8
+          projectName: svd-image-compression
+          directory: dist
