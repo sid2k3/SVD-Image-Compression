@@ -1,3 +1,5 @@
+import { display_compressed_image, display_separator } from './utils'
+
 const myWorker = new Worker(new URL('./worker.js', import.meta.url))
 
 // number of ranks for which compressed image is to be computed
@@ -24,7 +26,7 @@ function handleImage(e) {
     outputImage.src = '#'
     const img = document.createElement('img')
     img.src = URL.createObjectURL(inputFile.files[0])
-    const canvas = document.querySelector('#canvas')
+    const canvas = document.querySelector('#input_canvas')
     const context = canvas.getContext('2d', {
       willReadFrequently: true,
     })
@@ -88,7 +90,13 @@ function handleImage(e) {
       myWorker.onmessage = (e) => {
         if (e.data.type === 'previewDone') {
           imageData.data.set(bufferArray.subarray(0, image_size))
-          display_compressed_image(img.height, img.width, imageData)
+          display_compressed_image(
+            img.height,
+            img.width,
+            imageData,
+            outputImage
+          )
+          display_separator()
           myWorker.postMessage({
             width: img.width,
             height: img.height,
@@ -107,31 +115,14 @@ function handleImage(e) {
             bufferArray.subarray(image_size * 5, image_size * 6)
           )
 
-          display_compressed_image(img.height, img.width, imageData)
+          display_compressed_image(
+            img.height,
+            img.width,
+            imageData,
+            outputImage
+          )
         }
       }
     }
   }
-}
-
-function display_compressed_image(img_height, img_width, imageData) {
-  const canvas = document.createElement('canvas')
-  const context = canvas.getContext('2d')
-  canvas.width = img_width
-  canvas.height = img_height
-
-  context.putImageData(imageData, 0, 0)
-
-  const src = canvas.toDataURL('image/webp')
-  outputImage.src = src
-
-  let base64Length = src.length - (src.indexOf(',') + 1)
-  let padding =
-    src.charAt(src.length - 2) === '='
-      ? 2
-      : src.charAt(src.length - 1) === '='
-      ? 1
-      : 0
-  let fileSize = base64Length * 0.75 - padding
-  console.log(`Expected size: ${Math.round(fileSize / 1000, 2)} KB`)
 }

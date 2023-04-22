@@ -1,0 +1,51 @@
+* {
+  box-sizing: border-box;
+}
+:root {
+  --split-point-percentage: 50%;
+}
+
+#imagebox {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  position: relative;
+  width: max-content;
+  height: max-content;
+}
+
+#input_canvas {
+  clip-path: inset(0 var(--split-point-percentage) 0 0);
+  grid-area: 1 / 1;
+}
+
+#compressed_image {
+  opacity: 1;
+  grid-area: 1 / 1;
+}
+
+#quality_separator {
+  position: absolute;
+  top: 0;
+  background-color: rgb(65, 65, 65);
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  visibility: hidden;
+  transform: translateX(var(--split-point));
+  display: flex;
+}
+
+#quality_separator.visible {
+  visibility: visible;
+}
+
+#input_canvas,
+#compressed_image {
+  max-width: 80vw;
+}
+#quality_separator_icon {
+  align-items: center;
+  transform: scale(10);
+  fill: rgb(0, 139, 185);
+}
