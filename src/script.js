@@ -13,7 +13,7 @@ store.set('displayedImageId', 5)
 
 const fileSelector = document.querySelector('#fileselect')
 const outputImage = document.querySelector('#compressed_image')
-const imageBox = document.querySelector('#imagebox')
+const imageBoxWrapper = document.querySelector('#wrapper')
 
 fileSelector.addEventListener('change', handleImage)
 
@@ -111,7 +111,7 @@ function handleImage(e) {
 
           store.set('previewLoading', false)
           store.set('previewLoaded', true)
-          imageBox.style.removeProperty('display')
+          imageBoxWrapper.classList.remove('hidden')
           display_separator()
           store.set('highQualityLoading', true)
           showInfoPane({

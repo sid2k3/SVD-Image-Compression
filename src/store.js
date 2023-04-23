@@ -20,6 +20,11 @@ class Store {
     } else if (key === 'previewLoading') {
       const loadingContainer = document.querySelector('#loading_container')
       loadingContainer.classList.add('hidden')
+    } else if (key === 'highQualityLoaded' && !!value) {
+      const loadingContainer = document.querySelector('#loading_container')
+      loadingContainer.classList.add('hidden')
+      const wrapper = document.querySelector('#wrapper')
+      wrapper.classList.remove('hidden')
     }
     window.dataStore[key] = value
   }

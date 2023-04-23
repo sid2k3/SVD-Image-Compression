@@ -1,6 +1,6 @@
 @import './loading.css';
 @import './background.css';
-@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace&family=Cormorant+Garamond:ital,wght@1,300&display=swap');
 * {
   box-sizing: border-box;
 }
@@ -193,4 +193,24 @@ body {
 #downloadLink {
   background-color: black;
   width: 50px;
+}
+
+#wrapper {
+  display: flex;
+  gap: 2em;
+}
+
+/* input range make vertical */
+#qualityRange {
+  appearance: slider-vertical;
+  width: 30px;
+}
+
+#labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: rgb(150, 150, 150);
+  font-family: 'Cormorant Garamond', serif;
+  /* font-size: small; */
 }

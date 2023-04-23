@@ -211,15 +211,31 @@
           </div>
         </div>
       </div>
-      <div id="imagebox" style="display: none">
-        <canvas id="input_canvas"></canvas>
-        <img id="compressed_image" />
-        <div id="quality_separator">
-          <div id="quality_separator_icon"></div>
+      <div id="wrapper" class="hidden">
+        <div id="imagebox">
+          <canvas id="input_canvas"></canvas>
+          <img id="compressed_image" />
+          <div id="quality_separator">
+            <div id="quality_separator_icon"></div>
+          </div>
+          <a href="#" id="downloadLink" download
+            ><img src="/images/download.png" id="downloadBtn"
+          /></a>
         </div>
-        <a href="#" id="downloadLink" download
-          ><img src="/images/download.png" id="downloadBtn"
-        /></a>
+        <input
+          type="range"
+          name="qualityRange"
+          id="qualityRange"
+          orient="vertical"
+          max="5"
+          min="0"
+          step="1"
+          value="0"
+        />
+        <div id="labels">
+          <h1>High Quality</h1>
+          <h1>Low Quality</h1>
+        </div>
       </div>
     </div>
     <div id="infoPane" class="hidden">
