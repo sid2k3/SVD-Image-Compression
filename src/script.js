@@ -1,7 +1,7 @@
 import {
   display_compressed_image,
   display_separator,
-  create_data_urls,
+  create_image_blobs,
 } from './utils'
 import { store } from './store'
 const myWorker = new Worker(new URL('./worker.js', import.meta.url))
@@ -96,7 +96,7 @@ function handleImage(e) {
 
       myWorker.onmessage = async (e) => {
         if (e.data.type === 'previewDone') {
-          await create_data_urls(
+          await create_image_blobs(
             img.height,
             img.width,
 
@@ -126,7 +126,7 @@ function handleImage(e) {
 
           console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
           startTime = Date.now()
-          await create_data_urls(
+          await create_image_blobs(
             img.height,
             img.width,
             bufferArray,

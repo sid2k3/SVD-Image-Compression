@@ -7,7 +7,7 @@ export function display(image_id) {
   store.set('displayedImageId', image_id)
   display_compressed_image(image_id, outputImage, 'highQuality')
 }
-export async function create_data_urls(
+export async function create_image_blobs(
   height,
   width,
   bufferArray,
@@ -41,8 +41,8 @@ export async function create_data_urls(
     context.putImageData(imageData, 0, 0)
     promises.push(getBlob(canvas))
   }
-  const data_urls = await Promise.all(promises)
-  store.set('imagesBlobs', data_urls)
+  const blobs = await Promise.all(promises)
+  store.set('imagesBlobs', blobs)
 }
 
 export function display_compressed_image(image_id, outputImage, mode) {
@@ -51,18 +51,9 @@ export function display_compressed_image(image_id, outputImage, mode) {
       ? store.get('previewBlob')
       : store.get('imagesBlobs')[image_id]
 
-  console.log(blob)
-  outputImage.src = window.URL.createObjectURL(blob)
-  const src = outputImage.src
-  let base64Length = src.length - (src.indexOf(',') + 1)
-  let padding =
-    src.charAt(src.length - 2) === '='
-      ? 2
-      : src.charAt(src.length - 1) === '='
-      ? 1
-      : 0
-  let fileSize = base64Length * 0.75 - padding
-  console.log(`Expected size: ${Math.round(fileSize / 1000, 2)} KB`)
+  const src = window.URL.createObjectURL(blob)
+  outputImage.src = src
+  console.log(`Expected size: ${Math.round(blob.size / 1000, 2)} KB`)
 }
 
 export function display_separator() {
