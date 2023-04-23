@@ -53,6 +53,8 @@ export function display_compressed_image(image_id, outputImage, mode) {
 
   const src = window.URL.createObjectURL(blob)
   outputImage.src = src
+  const downloadAnchor = document.querySelector('#downloadLink')
+  downloadAnchor.href = src
   console.log(`Expected size: ${Math.round(blob.size / 1000, 2)} KB`)
 }
 

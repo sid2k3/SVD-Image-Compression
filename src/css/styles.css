@@ -153,3 +153,12 @@ body {
   text-align: center;
   font-family: 'Bruno Ace', cursive;
 }
+
+#downloadBtn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  padding: 10px;
+  cursor: pointer;
+}
