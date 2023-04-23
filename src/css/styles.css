@@ -36,7 +36,14 @@
   display: flex;
 }
 
+#quality_separator #quality_separator_icon {
+  visibility: hidden;
+}
+
 #quality_separator.visible {
+  visibility: visible;
+}
+#quality_separator.visible #quality_separator_icon {
   visibility: visible;
 }
 

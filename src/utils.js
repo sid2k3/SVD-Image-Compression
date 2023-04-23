@@ -30,6 +30,8 @@ export function display_separator() {
   separator.classList.add('visible')
 
   const input_canvas = document.querySelector('#input_canvas')
+  const separator_svg = document.querySelector('#quality_separator_icon')
+  separator_svg.style.removeProperty('visibility')
   const img_width = input_canvas.getBoundingClientRect().width
 
   document.documentElement.style.setProperty(
