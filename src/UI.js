@@ -28,12 +28,12 @@ separator.addEventListener('mousedown', (event) => {
   event.preventDefault()
 
   if (isEventAttached) return
-  document.addEventListener('mousemove', moveListener)
+  parent.addEventListener('mousemove', moveListener)
   isEventAttached = true
 })
 
 document.addEventListener('mouseup', (event) => {
   event.preventDefault()
   isEventAttached = false
-  document.removeEventListener('mousemove', moveListener)
+  parent.removeEventListener('mousemove', moveListener)
 })
