@@ -79,7 +79,6 @@ function handleImage(e) {
       inputBufferArray.set(imageDataArray)
 
       // disable button
-      fileSelector.classList.add('hidden')
       store.set('previewLoading', true)
       myWorker.postMessage({
         width: img.width,

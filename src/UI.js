@@ -7,6 +7,8 @@ import {
 
 const separator = document.querySelector('#quality_separator')
 const parent = document.querySelector('#imagebox')
+const fileBrowser = document.querySelector('#fileBrowser')
+const fileSelect = document.querySelector('#fileselect')
 
 let isEventAttached = false
 
@@ -43,4 +45,10 @@ document.addEventListener('mouseup', (event) => {
 
 window.addEventListener('resize', () => {
   updateSeparator()
+})
+
+fileBrowser.addEventListener('click', (e) => {
+  if (e.target === fileSelect) return
+  e.preventDefault()
+  fileSelect.click()
 })

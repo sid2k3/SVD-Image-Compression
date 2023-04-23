@@ -38,7 +38,10 @@
       </ul>
     </div>
     <div id="root">
-      <input type="file" id="fileselect" accept="image/*" />
+      <div id="fileBrowser">
+        <input type="file" id="fileselect" name="fileselect" accept="image/*" />
+        <label for="fileselect">Upload File</label>
+      </div>
       <div class="container hidden" id="loading_container">
         <div class="h1Container">
           <div class="cube h1 w1 l1">
@@ -216,6 +219,7 @@
         </div>
       </div>
     </div>
+    <div id="footer">Snap Squeeze</div>
     <script src="src/script.js" type="module"></script>
     <script src="src/UI.js" type="module"></script>
   </body>

@@ -1,5 +1,6 @@
 @import './loading.css';
 @import './background.css';
+@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace&display=swap');
 * {
   box-sizing: border-box;
 }
@@ -9,6 +10,10 @@
 
 #fileselect {
   color: white;
+  position: absolute;
+  width: 100px;
+  opacity: 0;
+  visibility: hidden;
 }
 
 #root {
@@ -103,5 +108,48 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
+}
+
+#fileBrowser {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: rgb(71, 136, 233);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px 0 rgb(71, 136, 233);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#fileBrowser:hover {
+  background-color: rgb(71, 136, 233, 0.8);
+  transform: scale(1.1);
+}
+
+#fileBrowser:active {
+  background-color: rgb(71, 136, 233, 0.6);
+  box-shadow: 0 0 10px 0 rgb(71, 136, 233, 0.6);
+  transform: scale(0.9);
+}
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+  right: 0;
+  color: rgb(71, 136, 233);
+  font-family: 'Bruno Ace', cursive;
+  font-size: 1.5rem;
+  padding: 1em;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+#fileBrowser {
+  font-size: 1.5rem;
+  text-align: center;
+  font-family: 'Bruno Ace', cursive;
 }
