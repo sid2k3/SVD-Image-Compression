@@ -7,7 +7,7 @@ export function display(image_id) {
   store.set('displayedImageId', image_id)
   display_compressed_image(image_id, outputImage, 'highQuality')
 }
-export function create_data_urls(
+export async function create_data_urls(
   height,
   width,
   bufferArray,
@@ -16,7 +16,6 @@ export function create_data_urls(
   mode
 ) {
   const image_size = height * width * 4
-  const data_urls = []
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d')
   canvas.width = width
@@ -26,12 +25,13 @@ export function create_data_urls(
     imageData.data.set(bufferArray.subarray(0, image_size))
     context.putImageData(imageData, 0, 0)
 
-    const src = canvas.toDataURL('image/webp')
+    const blob = await getBlob(canvas)
 
-    store.set('previewURL', src)
+    store.set('previewBlob', blob)
 
-    return src
+    return blob
   }
+  const promises = []
   for (let i = 0; i < numberOfRanks; i++) {
     // set underlying data of imageData object of canvas to subarray of bufferArray which contains the (i+1)th compressed image
     imageData.data.set(
@@ -39,20 +39,21 @@ export function create_data_urls(
     )
 
     context.putImageData(imageData, 0, 0)
-
-    const src = canvas.toDataURL('image/webp')
-    data_urls.push(src)
+    promises.push(getBlob(canvas))
   }
-  store.set('data_urls', data_urls)
+  const data_urls = await Promise.all(promises)
+  store.set('imagesBlobs', data_urls)
 }
 
 export function display_compressed_image(image_id, outputImage, mode) {
-  const src =
+  const blob =
     mode === 'preview'
-      ? store.get('previewURL')
-      : store.get('data_urls')[image_id]
+      ? store.get('previewBlob')
+      : store.get('imagesBlobs')[image_id]
 
-  outputImage.src = src
+  console.log(blob)
+  outputImage.src = window.URL.createObjectURL(blob)
+  const src = outputImage.src
   let base64Length = src.length - (src.indexOf(',') + 1)
   let padding =
     src.charAt(src.length - 2) === '='
@@ -108,4 +109,8 @@ export function updateSeparator() {
   const x = width - (percentage.replace('%', '') / 100) * width
 
   document.documentElement.style.setProperty('--split-point', `${x}px`)
+}
+
+export function getBlob(canvas) {
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/webp'))
 }

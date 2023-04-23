@@ -38,7 +38,7 @@ function handleImage(e) {
     })
 
     img.onload = function () {
-      const startTime = Date.now()
+      let startTime = Date.now()
 
       const ranks = []
       const max_rank = Math.min(img.height, img.width)
@@ -94,9 +94,9 @@ function handleImage(e) {
         inputBuffer,
       })
 
-      myWorker.onmessage = (e) => {
+      myWorker.onmessage = async (e) => {
         if (e.data.type === 'previewDone') {
-          create_data_urls(
+          await create_data_urls(
             img.height,
             img.width,
 
@@ -122,11 +122,11 @@ function handleImage(e) {
             preview: false,
           })
         } else {
-          const endTime = Date.now()
+          let endTime = Date.now()
 
           console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
-
-          create_data_urls(
+          startTime = Date.now()
+          await create_data_urls(
             img.height,
             img.width,
             bufferArray,
@@ -134,7 +134,7 @@ function handleImage(e) {
             numberOfRanks,
             'highQuality'
           )
-          
+
           store.set('highQualityLoading', false)
           store.set('highQualityLoaded', true)
 
@@ -144,6 +144,8 @@ function handleImage(e) {
             outputImage,
             'highQuality'
           )
+          endTime = Date.now()
+          console.log('Time taken by Canvas: ' + (endTime - startTime) + 'ms')
         }
       }
     }
