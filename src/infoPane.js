@@ -31,7 +31,6 @@ export const showInfoPane = ({
 
   set('imageGainSize', percentageReduction.toFixed(2) + '%')
 
-  console.log(typeof outputImageSize)
   console.log(store.get('imageGainSize'))
   inputImageSizeElement.textContent = inputImageSize
   outputImageSizeElement.textContent = outputImageSize

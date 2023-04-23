@@ -9,7 +9,7 @@ const myWorker = new Worker(new URL('./worker.js', import.meta.url))
 
 // number of ranks for which compressed image is to be computed
 const numberOfRanks = 6
-store.set('displayedImageId', 5)
+store.set('displayedImageId', 0)
 
 const fileSelector = document.querySelector('#fileselect')
 const outputImage = document.querySelector('#compressed_image')

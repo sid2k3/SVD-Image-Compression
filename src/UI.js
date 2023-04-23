@@ -48,6 +48,12 @@ parent.addEventListener('mouseup', (event) => {
 
 window.addEventListener('resize', () => {
   updateSeparator()
+  const mediaQuery = window.matchMedia('(max-width: 991px)')
+  if (mediaQuery.matches) {
+    rangeQualityInput.removeAttribute('orient')
+  } else {
+    rangeQualityInput.setAttribute('orient', 'vertical')
+  }
 })
 
 fileBrowser.addEventListener('click', (e) => {
@@ -65,5 +71,13 @@ rangeQualityInput.addEventListener('input', (e) => {
     wrapper.classList.add('hidden')
     const loadingContainer = document.querySelector('#loading_container')
     loadingContainer.classList.remove('hidden')
+    store.set('displayedImageId', e.target.value)
   }
 })
+
+const mediaQuery = window.matchMedia('(max-width: 991px)')
+if (mediaQuery.matches) {
+  rangeQualityInput.removeAttribute('orient')
+} else {
+  rangeQualityInput.setAttribute('orient', 'vertical')
+}

@@ -109,5 +109,5 @@ export function updateSeparator() {
 }
 
 export function getBlob(canvas) {
-  return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg'))
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/webp'))
 }

@@ -73,6 +73,8 @@ body {
 #compressed_image {
   max-width: 80vw;
   max-height: 80vh;
+  height: 100%;
+  width: 100%;
 }
 
 #quality_separator.dragging #quality_separator_icon {
@@ -212,5 +214,17 @@ body {
   justify-content: space-between;
   color: rgb(150, 150, 150);
   font-family: 'Cormorant Garamond', serif;
-  /* font-size: small; */
+}
+
+@media screen and (max-width: 991px) {
+  #wrapper {
+    flex-direction: column;
+  }
+  #qualityRange {
+    appearance: slider-horizontal;
+    width: 100%;
+  }
+  #labels {
+    display: none;
+  }
 }
