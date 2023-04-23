@@ -1,19 +1,58 @@
-export function display_compressed_image(
+import { store } from './store'
+
+const outputImage = document.querySelector('#compressed_image')
+
+//to display images when all images are computed and data urls are set
+export function display(image_id) {
+  store.set('displayedImageId', image_id)
+  display_compressed_image(image_id, outputImage, 'highQuality')
+}
+export function create_data_urls(
   height,
   width,
+  bufferArray,
   imageData,
-  outputImage
+  numberOfRanks,
+  mode
 ) {
+  const image_size = height * width * 4
+  const data_urls = []
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d')
   canvas.width = width
   canvas.height = height
 
-  context.putImageData(imageData, 0, 0)
+  if (mode === 'preview') {
+    imageData.data.set(bufferArray.subarray(0, image_size))
+    context.putImageData(imageData, 0, 0)
 
-  const src = canvas.toDataURL('image/webp')
+    const src = canvas.toDataURL('image/webp')
+
+    store.set('previewURL', src)
+
+    return src
+  }
+  for (let i = 0; i < numberOfRanks; i++) {
+    // set underlying data of imageData object of canvas to subarray of bufferArray which contains the (i+1)th compressed image
+    imageData.data.set(
+      bufferArray.subarray(image_size * i, image_size * (i + 1))
+    )
+
+    context.putImageData(imageData, 0, 0)
+
+    const src = canvas.toDataURL('image/webp')
+    data_urls.push(src)
+  }
+  store.set('data_urls', data_urls)
+}
+
+export function display_compressed_image(image_id, outputImage, mode) {
+  const src =
+    mode === 'preview'
+      ? store.get('previewURL')
+      : store.get('data_urls')[image_id]
+
   outputImage.src = src
-
   let base64Length = src.length - (src.indexOf(',') + 1)
   let padding =
     src.charAt(src.length - 2) === '='

@@ -1,9 +1,14 @@
-import { display_compressed_image, display_separator } from './utils'
+import {
+  display_compressed_image,
+  display_separator,
+  create_data_urls,
+} from './utils'
 import { store } from './store'
 const myWorker = new Worker(new URL('./worker.js', import.meta.url))
 
 // number of ranks for which compressed image is to be computed
 const numberOfRanks = 6
+store.set('displayedImageId', 5)
 
 const fileSelector = document.querySelector('#fileselect')
 const outputImage = document.querySelector('#compressed_image')
@@ -91,17 +96,23 @@ function handleImage(e) {
 
       myWorker.onmessage = (e) => {
         if (e.data.type === 'previewDone') {
-          imageData.data.set(bufferArray.subarray(0, image_size))
-          display_compressed_image(
+          create_data_urls(
             img.height,
             img.width,
+
+            bufferArray,
             imageData,
-            outputImage
+            1,
+            'preview'
           )
+
+          display_compressed_image(0, outputImage, 'preview')
+
           store.set('previewLoading', false)
           store.set('previewLoaded', true)
           imageBox.style.removeProperty('display')
           display_separator()
+          store.set('highQualityLoading', true)
           myWorker.postMessage({
             width: img.width,
             height: img.height,
@@ -115,16 +126,23 @@ function handleImage(e) {
 
           console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
 
-          // set underlying data of imageData object of canvas to bufferArray which contains the compressed image
-          imageData.data.set(
-            bufferArray.subarray(image_size * 5, image_size * 6)
-          )
-
-          display_compressed_image(
+          create_data_urls(
             img.height,
             img.width,
+            bufferArray,
             imageData,
-            outputImage
+            numberOfRanks,
+            'highQuality'
+          )
+          
+          store.set('highQualityLoading', false)
+          store.set('highQualityLoaded', true)
+
+          //mode is set to highQuality and not preview
+          display_compressed_image(
+            store.get('displayedImageId'),
+            outputImage,
+            'highQuality'
           )
         }
       }
