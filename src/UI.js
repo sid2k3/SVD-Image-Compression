@@ -29,6 +29,7 @@ separator.addEventListener('mousedown', (event) => {
   event.preventDefault()
 
   if (isEventAttached) return
+  separator.classList.add('dragging')
   parent.addEventListener('mousemove', moveListener)
   isEventAttached = true
 })
@@ -36,6 +37,7 @@ separator.addEventListener('mousedown', (event) => {
 document.addEventListener('mouseup', (event) => {
   event.preventDefault()
   isEventAttached = false
+  separator.classList.remove('dragging')
   parent.removeEventListener('mousemove', moveListener)
 })
 
