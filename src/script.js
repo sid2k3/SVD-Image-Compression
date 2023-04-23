@@ -1,5 +1,5 @@
 import { display_compressed_image, display_separator } from './utils'
-
+import { store } from './store'
 const myWorker = new Worker(new URL('./worker.js', import.meta.url))
 
 // number of ranks for which compressed image is to be computed
@@ -7,6 +7,7 @@ const numberOfRanks = 6
 
 const fileSelector = document.querySelector('#fileselect')
 const outputImage = document.querySelector('#compressed_image')
+const imageBox = document.querySelector('#imagebox')
 
 fileSelector.addEventListener('change', handleImage)
 
@@ -78,6 +79,8 @@ function handleImage(e) {
       inputBufferArray.set(imageDataArray)
 
       // disable button
+      fileSelector.classList.add('hidden')
+      store.set('previewLoading', true)
       myWorker.postMessage({
         width: img.width,
         height: img.height,
@@ -96,6 +99,9 @@ function handleImage(e) {
             imageData,
             outputImage
           )
+          store.set('previewLoading', false)
+          store.set('previewLoaded', true)
+          imageBox.style.removeProperty('display')
           display_separator()
           myWorker.postMessage({
             width: img.width,
