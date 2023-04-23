@@ -2,6 +2,7 @@ import './css/styles.css'
 import {
   get_cursor_position_relative_to_element,
   get_percentage_from_x,
+  updateSeparator,
 } from './utils'
 
 const separator = document.querySelector('#quality_separator')
@@ -36,4 +37,8 @@ document.addEventListener('mouseup', (event) => {
   event.preventDefault()
   isEventAttached = false
   parent.removeEventListener('mousemove', moveListener)
+})
+
+window.addEventListener('resize', () => {
+  updateSeparator()
 })

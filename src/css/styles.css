@@ -5,6 +5,13 @@
   --split-point-percentage: 50%;
 }
 
+body {
+  /* background-color: #222; */
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
 #imagebox {
   display: grid;
   grid-template-columns: 1fr;
@@ -20,7 +27,6 @@
 }
 
 #compressed_image {
-  opacity: 1;
   grid-area: 1 / 1;
 }
 
@@ -53,6 +59,10 @@
 }
 #quality_separator_icon {
   align-items: center;
-  transform: scale(10);
+  width: 50px;
+  height: max-content;
+  position: absolute;
+  top: 50%;
+  left: -23.5px;
   fill: rgb(0, 139, 185);
 }

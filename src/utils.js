@@ -57,3 +57,16 @@ export function get_percentage_from_x(x, element) {
 export function clamp(num, min, max) {
   return Math.min(Math.max(num, min), max)
 }
+
+export function updateSeparator() {
+  const percentage =
+    document.documentElement.style.getPropertyValue(
+      '--split-point-percentage'
+    ) || '50%'
+
+  const canvas = document.querySelector('#input_canvas')
+  const width = canvas.getBoundingClientRect().width
+  const x = width - (percentage.replace('%', '') / 100) * width
+
+  document.documentElement.style.setProperty('--split-point', `${x}px`)
+}
