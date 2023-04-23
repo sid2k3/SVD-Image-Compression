@@ -1,3 +1,4 @@
+import { showInfoPane } from './infoPane'
 import { store } from './store'
 
 const outputImage = document.querySelector('#compressed_image')
@@ -56,6 +57,9 @@ export function display_compressed_image(image_id, outputImage, mode) {
   const downloadAnchor = document.querySelector('#downloadLink')
   downloadAnchor.href = src
   console.log(`Expected size: ${Math.round(blob.size / 1000, 2)} KB`)
+  showInfoPane({
+    outputImageSize: `${Math.round(blob.size / 1000, 2)} KB`,
+  })
 }
 
 export function display_separator() {

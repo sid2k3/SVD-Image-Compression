@@ -24,7 +24,6 @@
   height: 100%;
 }
 body {
-  /* background-color: #222; */
   margin: 0;
   padding: 0;
 }
@@ -154,11 +153,44 @@ body {
   font-family: 'Bruno Ace', cursive;
 }
 
-#downloadBtn {
+#downloadLink {
   position: absolute;
   right: 0;
   bottom: 0;
   width: 50px;
   padding: 10px;
   cursor: pointer;
+}
+
+#downloadBtn {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+#infoPane {
+  position: absolute;
+  bottom: 0;
+  /* width: 300px; */
+  background: #474343b0;
+  margin: 1em;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, 1fr);
+  padding: 1em;
+  color: white;
+  font-family: 'Bruno Ace', cursive;
+  gap: 1em;
+}
+
+#infoPane div:nth-child(odd) {
+  color: rgb(0, 140, 255);
+  justify-self: end;
+}
+#infoPane div:nth-child(even) {
+  justify-self: center;
+}
+
+#downloadLink {
+  background-color: black;
+  width: 50px;
 }

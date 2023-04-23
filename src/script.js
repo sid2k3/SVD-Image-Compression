@@ -4,6 +4,7 @@ import {
   create_image_blobs,
 } from './utils'
 import { store } from './store'
+import { showInfoPane } from './infoPane'
 const myWorker = new Worker(new URL('./worker.js', import.meta.url))
 
 // number of ranks for which compressed image is to be computed
@@ -113,6 +114,10 @@ function handleImage(e) {
           imageBox.style.removeProperty('display')
           display_separator()
           store.set('highQualityLoading', true)
+          showInfoPane({
+            inputImageSize: `${Math.round(initialFileSize, 2)} KB`,
+            inputImageType: inputFile.files[0].type,
+          })
           myWorker.postMessage({
             width: img.width,
             height: img.height,

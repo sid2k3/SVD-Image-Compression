@@ -5,6 +5,10 @@ class Store {
       previewLoaded: false,
       highQualityLoading: false,
       highQualityLoaded: false,
+      inputImageType: '',
+      outputImageType: 'WebP',
+      inputImageSize: '',
+      outputImageSize: '',
     }
   }
   set(key, value) {
