@@ -1,12 +1,19 @@
-import { display_compressed_image, display_separator } from './utils'
-
+import {
+  display_compressed_image,
+  display_separator,
+  create_image_blobs,
+} from './utils'
+import { store } from './store'
+import { showInfoPane } from './infoPane'
 const myWorker = new Worker(new URL('./worker.js', import.meta.url))
 
 // number of ranks for which compressed image is to be computed
 const numberOfRanks = 6
+store.set('displayedImageId', 0)
 
 const fileSelector = document.querySelector('#fileselect')
 const outputImage = document.querySelector('#compressed_image')
+const imageBoxWrapper = document.querySelector('#wrapper')
 
 fileSelector.addEventListener('change', handleImage)
 
@@ -32,7 +39,7 @@ function handleImage(e) {
     })
 
     img.onload = function () {
-      const startTime = Date.now()
+      let startTime = Date.now()
 
       const ranks = []
       const max_rank = Math.min(img.height, img.width)
@@ -78,6 +85,7 @@ function handleImage(e) {
       inputBufferArray.set(imageDataArray)
 
       // disable button
+      store.set('previewLoading', true)
       myWorker.postMessage({
         width: img.width,
         height: img.height,
@@ -87,16 +95,29 @@ function handleImage(e) {
         inputBuffer,
       })
 
-      myWorker.onmessage = (e) => {
+      myWorker.onmessage = async (e) => {
         if (e.data.type === 'previewDone') {
-          imageData.data.set(bufferArray.subarray(0, image_size))
-          display_compressed_image(
+          await create_image_blobs(
             img.height,
             img.width,
+
+            bufferArray,
             imageData,
-            outputImage
+            1,
+            'preview'
           )
+
+          display_compressed_image(0, outputImage, 'preview')
+
+          store.set('previewLoading', false)
+          store.set('previewLoaded', true)
+          imageBoxWrapper.classList.remove('hidden')
           display_separator()
+          store.set('highQualityLoading', true)
+          showInfoPane({
+            inputImageSize: `${Math.round(initialFileSize, 2)} KB`,
+            inputImageType: inputFile.files[0].type,
+          })
           myWorker.postMessage({
             width: img.width,
             height: img.height,
@@ -106,21 +127,30 @@ function handleImage(e) {
             preview: false,
           })
         } else {
-          const endTime = Date.now()
+          let endTime = Date.now()
 
           console.log('Time taken by JS: ' + (endTime - startTime) + 'ms')
-
-          // set underlying data of imageData object of canvas to bufferArray which contains the compressed image
-          imageData.data.set(
-            bufferArray.subarray(image_size * 5, image_size * 6)
-          )
-
-          display_compressed_image(
+          startTime = Date.now()
+          await create_image_blobs(
             img.height,
             img.width,
+            bufferArray,
             imageData,
-            outputImage
+            numberOfRanks,
+            'highQuality'
           )
+
+          store.set('highQualityLoading', false)
+          store.set('highQualityLoaded', true)
+
+          //mode is set to highQuality and not preview
+          display_compressed_image(
+            store.get('displayedImageId'),
+            outputImage,
+            'highQuality'
+          )
+          endTime = Date.now()
+          console.log('Time taken by Canvas: ' + (endTime - startTime) + 'ms')
         }
       }
     }

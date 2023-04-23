@@ -1,28 +1,65 @@
-export function display_compressed_image(
+import { showInfoPane } from './infoPane'
+import { store } from './store'
+
+const outputImage = document.querySelector('#compressed_image')
+
+//to display images when all images are computed and data urls are set
+export function display(image_id) {
+  store.set('displayedImageId', image_id)
+  display_compressed_image(image_id, outputImage, 'highQuality')
+}
+export async function create_image_blobs(
   height,
   width,
+  bufferArray,
   imageData,
-  outputImage
+  numberOfRanks,
+  mode
 ) {
+  const image_size = height * width * 4
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d')
   canvas.width = width
   canvas.height = height
 
-  context.putImageData(imageData, 0, 0)
+  if (mode === 'preview') {
+    imageData.data.set(bufferArray.subarray(0, image_size))
+    context.putImageData(imageData, 0, 0)
 
-  const src = canvas.toDataURL('image/webp')
+    const blob = await getBlob(canvas)
+
+    store.set('previewBlob', blob)
+
+    return blob
+  }
+  const promises = []
+  for (let i = 0; i < numberOfRanks; i++) {
+    // set underlying data of imageData object of canvas to subarray of bufferArray which contains the (i+1)th compressed image
+    imageData.data.set(
+      bufferArray.subarray(image_size * i, image_size * (i + 1))
+    )
+
+    context.putImageData(imageData, 0, 0)
+    promises.push(getBlob(canvas))
+  }
+  const blobs = await Promise.all(promises)
+  store.set('imagesBlobs', blobs)
+}
+
+export function display_compressed_image(image_id, outputImage, mode) {
+  const blob =
+    mode === 'preview'
+      ? store.get('previewBlob')
+      : store.get('imagesBlobs')[image_id]
+
+  const src = window.URL.createObjectURL(blob)
   outputImage.src = src
-
-  let base64Length = src.length - (src.indexOf(',') + 1)
-  let padding =
-    src.charAt(src.length - 2) === '='
-      ? 2
-      : src.charAt(src.length - 1) === '='
-      ? 1
-      : 0
-  let fileSize = base64Length * 0.75 - padding
-  console.log(`Expected size: ${Math.round(fileSize / 1000, 2)} KB`)
+  const downloadAnchor = document.querySelector('#downloadLink')
+  downloadAnchor.href = src
+  console.log(`Expected size: ${Math.round(blob.size / 1000, 2)} KB`)
+  showInfoPane({
+    outputImageSize: `${Math.round(blob.size / 1000, 2)} KB`,
+  })
 }
 
 export function display_separator() {
@@ -69,4 +106,8 @@ export function updateSeparator() {
   const x = width - (percentage.replace('%', '') / 100) * width
 
   document.documentElement.style.setProperty('--split-point', `${x}px`)
+}
+
+export function getBlob(canvas) {
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/webp'))
 }

@@ -1,3 +1,6 @@
+@import './loading.css';
+@import './background.css';
+@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace&family=Cormorant+Garamond:ital,wght@1,300&display=swap');
 * {
   box-sizing: border-box;
 }
@@ -5,9 +8,22 @@
   --split-point-percentage: 50%;
 }
 
+#fileselect {
+  color: white;
+  position: absolute;
+  width: 100px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+#root {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - 2em);
+  padding: 2em;
+  height: 100%;
+}
 body {
-  /* background-color: #222; */
-  min-height: 100vh;
   margin: 0;
   padding: 0;
 }
@@ -33,7 +49,7 @@ body {
 #quality_separator {
   position: absolute;
   top: 0;
-  background-color: rgb(65, 65, 65);
+  background-color: rgb(22, 21, 21);
   width: 5px;
   height: 100%;
   cursor: col-resize;
@@ -56,13 +72,159 @@ body {
 #input_canvas,
 #compressed_image {
   max-width: 80vw;
+  max-height: 80vh;
+  height: 100%;
+  width: 100%;
 }
+
+#quality_separator.dragging #quality_separator_icon {
+  transform: rotate(45deg) scale(0.8);
+}
+
 #quality_separator_icon {
   align-items: center;
-  width: 50px;
-  height: max-content;
+  width: 25px;
+  height: 25px;
   position: absolute;
   top: 50%;
-  left: -23.5px;
-  fill: rgb(0, 139, 185);
+  left: -10px;
+  background: rgb(53, 53, 53);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+#quality_separator_icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 12.5px;
+  height: 12.5px;
+  background: rgb(71, 136, 233);
+  transition: transform 0.2s ease;
+}
+#quality_separator.dragging #quality_separator_icon::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.hidden {
+  display: none !important;
+}
+
+#fileBrowser {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: rgb(71, 136, 233);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px 0 rgb(71, 136, 233);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#fileBrowser:hover {
+  background-color: rgb(71, 136, 233, 0.8);
+  transform: scale(1.1);
+}
+
+#fileBrowser:active {
+  background-color: rgb(71, 136, 233, 0.6);
+  box-shadow: 0 0 10px 0 rgb(71, 136, 233, 0.6);
+  transform: scale(0.9);
+}
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 10;
+  right: 0;
+  color: rgb(71, 136, 233);
+  font-family: 'Bruno Ace', cursive;
+  font-size: 1.5rem;
+  padding: 1em;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+#fileBrowser {
+  font-size: 1.5rem;
+  text-align: center;
+  font-family: 'Bruno Ace', cursive;
+}
+
+#downloadLink {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#downloadBtn {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+#infoPane {
+  position: absolute;
+  bottom: 0;
+  /* width: 300px; */
+  background: #474343b0;
+  margin: 1em;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, 1fr);
+  padding: 1em;
+  color: white;
+  font-family: 'Bruno Ace', cursive;
+  gap: 1em;
+}
+
+#infoPane div:nth-child(odd) {
+  color: rgb(0, 140, 255);
+  justify-self: end;
+}
+#infoPane div:nth-child(even) {
+  justify-self: center;
+}
+
+#downloadLink {
+  background-color: black;
+  width: 50px;
+}
+
+#wrapper {
+  display: flex;
+  gap: 2em;
+}
+
+/* input range make vertical */
+#qualityRange {
+  appearance: slider-vertical;
+  width: 30px;
+}
+
+#labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: rgb(150, 150, 150);
+  font-family: 'Cormorant Garamond', serif;
+}
+
+@media screen and (max-width: 991px) {
+  #wrapper {
+    flex-direction: column;
+  }
+  #qualityRange {
+    appearance: slider-horizontal;
+    width: 100%;
+  }
+  #labels {
+    display: none;
+  }
 }

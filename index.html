@@ -8,30 +8,249 @@
   </head>
 
   <body>
-    <div>
-      <input type="file" id="fileselect" accept="image/*" />
-      <div id="imagebox">
-        <canvas id="input_canvas"></canvas>
-        <img id="compressed_image" />
-        <div id="quality_separator">
-          <svg
-            fill="#000000"
-            viewBox="0 0 16 16"
-            xmlns="http://www.w3.org/2000/svg"
-            id="quality_separator_icon"
-            style="visibility: hidden"
-          >
-            <g id="Layer_2" data-name="Layer 2">
-              <g id="Layer_1-2" data-name="Layer 1">
-                <path
-                  d="M6,3a.5.5,0,0,1-.5.5H1.71L3.35,5.15a.48.48,0,0,1,0,.7.48.48,0,0,1-.7,0L.15,3.35a.48.48,0,0,1,0-.7L2.65.15a.48.48,0,0,1,.7,0,.48.48,0,0,1,0,.7L1.71,2.5H5.5A.5.5,0,0,1,6,3Zm9.85-.35L13.35.15a.48.48,0,0,0-.7,0,.48.48,0,0,0,0,.7L14.29,2.5H10.5a.5.5,0,0,0,0,1h3.79L12.65,5.15a.48.48,0,0,0,0,.7.48.48,0,0,0,.7,0l2.5-2.5A.48.48,0,0,0,15.85,2.65Z"
-                />
-              </g>
-            </g>
-          </svg>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="area">
+      <ul class="circles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+    <div id="root">
+      <div id="fileBrowser">
+        <input type="file" id="fileselect" name="fileselect" accept="image/*" />
+        <label for="fileselect">Upload File</label>
+      </div>
+      <div class="container hidden" id="loading_container">
+        <div class="h1Container">
+          <div class="cube h1 w1 l1">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h1 w1 l2">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h1 w1 l3">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h1 w2 l1">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h1 w2 l2">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h1 w2 l3">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h1 w3 l1">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h1 w3 l2">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h1 w3 l3">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+        </div>
+
+        <div class="h2Container">
+          <div class="cube h2 w1 l1">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h2 w1 l2">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h2 w1 l3">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h2 w2 l1">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h2 w2 l2">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h2 w2 l3">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h2 w3 l1">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h2 w3 l2">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h2 w3 l3">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+        </div>
+
+        <div class="h3Container">
+          <div class="cube h3 w1 l1">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h3 w1 l2">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h3 w1 l3">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h3 w2 l1">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h3 w2 l2">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h3 w2 l3">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h3 w3 l1">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h3 w3 l2">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+
+          <div class="cube h3 w3 l3">
+            <div class="face top"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+          </div>
+        </div>
+      </div>
+      <div id="wrapper" class="hidden">
+        <div id="imagebox">
+          <canvas id="input_canvas"></canvas>
+          <img id="compressed_image" />
+          <div id="quality_separator">
+            <div id="quality_separator_icon"></div>
+          </div>
+          <a href="#" id="downloadLink" download
+            ><img src="/images/download.png" id="downloadBtn"
+          /></a>
+        </div>
+        <input
+          type="range"
+          name="qualityRange"
+          id="qualityRange"
+          orient="vertical"
+          max="5"
+          min="0"
+          step="1"
+          value="0"
+        />
+        <div id="labels">
+          <h1>High Quality</h1>
+          <h1>Low Quality</h1>
         </div>
       </div>
     </div>
+    <div id="infoPane" class="hidden">
+      <div>Input Type</div>
+      <div id="inputImageType"></div>
+      <div>Output Type</div>
+      <div id="outputImageType"></div>
+      <div>Input Size</div>
+      <div id="inputImageSize"></div>
+      <div>Output Size</div>
+      <div id="outputImageSize"></div>
+      <div>Change</div>
+      <div id="imageGainSize"></div>
+    </div>
+    <div id="footer">Snap Squeeze</div>
     <script src="src/script.js" type="module"></script>
     <script src="src/UI.js" type="module"></script>
   </body>
