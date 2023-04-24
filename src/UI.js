@@ -1,4 +1,5 @@
 import './css/styles.css'
+import { sendImageFile } from './script'
 import { store } from './store'
 import {
   display,
@@ -14,6 +15,7 @@ const fileSelect = document.querySelector('#fileselect')
 const rangeQualityInput = document.querySelector('#qualityRange')
 const uploadButton = document.querySelector('#uploadBtn')
 const downloadLink = document.querySelector('#downloadLink')
+const dragFeedback = document.querySelector('#dragFeedback')
 
 let isEventAttached = false
 
@@ -114,3 +116,32 @@ if (mediaQuery.matches) {
 } else {
   rangeQualityInput.setAttribute('orient', 'vertical')
 }
+
+document.addEventListener('dragenter', (e) => {
+  if (store.get('highQualityLoading')) return
+  e.dataTransfer.dropEffect = 'copyMove'
+  if (e.currentTarget.contains(e.relatedTarget)) return
+  e.preventDefault()
+  dragFeedback.classList.remove('hidden')
+})
+
+document.addEventListener('dragleave', (e) => {
+  if (store.get('highQualityLoading')) return
+  e.preventDefault()
+  if (e.currentTarget.contains(e.relatedTarget)) return
+
+  dragFeedback.classList.add('hidden')
+})
+
+document.addEventListener('drop', (e) => {
+  if (store.get('highQualityLoading')) return
+  e.preventDefault()
+  dragFeedback.classList.add('hidden')
+  const file = e.dataTransfer.items[0].getAsFile()
+  sendImageFile(file)
+})
+
+document.addEventListener('dragover', (e) => {
+  if (store.get('highQualityLoading')) return
+  e.preventDefault()
+})
