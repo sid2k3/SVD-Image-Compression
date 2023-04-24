@@ -2,6 +2,7 @@ import {
   display_compressed_image,
   display_separator,
   create_image_blobs,
+  reset,
 } from './utils'
 import { store } from './store'
 import { showInfoPane } from './infoPane'
@@ -25,6 +26,7 @@ function handleImage(e) {
   if (inputFile.files.length === 0) {
     return
   }
+  reset()
 
   const initialFileSize = inputFile.files[0].size / 1024
   console.log(`Initial size: ${Math.round(initialFileSize, 2)} KB`)

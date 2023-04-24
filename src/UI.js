@@ -13,15 +13,22 @@ const fileBrowser = document.querySelector('#fileBrowser')
 const fileSelect = document.querySelector('#fileselect')
 const rangeQualityInput = document.querySelector('#qualityRange')
 const uploadButton = document.querySelector('#uploadBtn')
+const downloadLink = document.querySelector('#downloadLink')
 
 let isEventAttached = false
 
-uploadButton.addEventListener('click', (e) => {
-  store.reset()
+uploadButton.addEventListener('touchstart', (e) => {
   e.preventDefault()
-  rangeQualityInput.value = 0
+  uploadButton.click()
+})
+downloadLink.addEventListener('touchstart', (e) => {
+  e.preventDefault()
+  downloadLink.click()
+})
+uploadButton.addEventListener('click', (e) => {
+  e.preventDefault()
+
   fileSelect.click()
-  document.documentElement.style.setProperty('--split-point-percentage', `50%`)
 })
 
 const moveListener = (isTouch, event) => {

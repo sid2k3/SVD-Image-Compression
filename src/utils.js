@@ -113,3 +113,11 @@ export function updateSeparator() {
 export function getBlob(canvas) {
   return new Promise((resolve) => canvas.toBlob(resolve, 'image/webp'))
 }
+
+export function reset() {
+  store.reset()
+  const rangeQualityInput = document.querySelector('#qualityRange')
+  rangeQualityInput.value = 0
+
+  document.documentElement.style.setProperty('--split-point-percentage', `50%`)
+}
