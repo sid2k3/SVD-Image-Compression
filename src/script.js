@@ -14,6 +14,7 @@ store.set('displayedImageId', 0)
 const fileSelector = document.querySelector('#fileselect')
 const outputImage = document.querySelector('#compressed_image')
 const imageBoxWrapper = document.querySelector('#wrapper')
+const uploadButton = document.querySelector('#uploadBtn')
 
 fileSelector.addEventListener('change', handleImage)
 
@@ -31,6 +32,9 @@ function handleImage(e) {
   if (inputFile.files.length) {
     //remove previous compressed image
     outputImage.src = '#'
+    uploadButton.disabled = true
+    const wrapper = document.querySelector('#wrapper')
+    wrapper.classList.add('hidden')
     const img = document.createElement('img')
     img.src = URL.createObjectURL(inputFile.files[0])
     const canvas = document.querySelector('#input_canvas')
@@ -40,7 +44,6 @@ function handleImage(e) {
 
     img.onload = function () {
       let startTime = Date.now()
-
       const ranks = []
       const max_rank = Math.min(img.height, img.width)
       for (let i = 1; i <= numberOfRanks; i++) {
@@ -149,6 +152,7 @@ function handleImage(e) {
             outputImage,
             'highQuality'
           )
+          uploadButton.disabled = false
           endTime = Date.now()
           console.log('Time taken by Canvas: ' + (endTime - startTime) + 'ms')
         }

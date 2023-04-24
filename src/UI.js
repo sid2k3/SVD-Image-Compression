@@ -12,6 +12,7 @@ const parent = document.querySelector('#imagebox')
 const fileBrowser = document.querySelector('#fileBrowser')
 const fileSelect = document.querySelector('#fileselect')
 const rangeQualityInput = document.querySelector('#qualityRange')
+const uploadButton = document.querySelector('#uploadBtn')
 
 let isEventAttached = false
 
@@ -81,3 +82,11 @@ if (mediaQuery.matches) {
 } else {
   rangeQualityInput.setAttribute('orient', 'vertical')
 }
+
+uploadButton.addEventListener('click', (e) => {
+  store.reset()
+  e.preventDefault()
+  rangeQualityInput.value = 0
+  fileSelect.click()
+  document.documentElement.style.setProperty('--split-point-percentage', `50%`)
+})

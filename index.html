@@ -39,7 +39,13 @@
     </div>
     <div id="root">
       <div id="fileBrowser">
-        <input type="file" id="fileselect" name="fileselect" accept="image/*" />
+        <input
+          type="file"
+          id="fileselect"
+          name="fileselect"
+          accept="image/*"
+          autocomplete="off"
+        />
         <label for="fileselect">Upload File</label>
       </div>
       <div class="container hidden" id="loading_container">
@@ -221,8 +227,12 @@
           <a href="#" id="downloadLink" download
             ><img src="/images/download.png" id="downloadBtn"
           /></a>
+          <button id="uploadBtn">
+            <img src="/images/upload.png" />
+          </button>
         </div>
         <input
+          autocomplete="off"
           type="range"
           name="qualityRange"
           id="qualityRange"

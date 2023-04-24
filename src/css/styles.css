@@ -22,6 +22,7 @@
   min-height: calc(100vh - 2em);
   padding: 2em;
   height: 100%;
+  overflow: hidden;
 }
 body {
   margin: 0;
@@ -167,6 +168,26 @@ body {
   cursor: pointer;
 }
 
+#uploadBtn {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: black;
+  border: none;
+}
+#uploadBtn:disabled {
+  background-color: rgba(0, 0, 0, 0.486);
+  cursor: not-allowed;
+}
+
+#uploadBtn img {
+  width: 100%;
+  height: 100%;
+}
+
 #downloadBtn {
   max-height: 100%;
   max-width: 100%;
@@ -174,7 +195,7 @@ body {
 
 #infoPane {
   position: absolute;
-  bottom: 0;
+  top: 0;
   /* width: 300px; */
   background: #474343b0;
   margin: 1em;

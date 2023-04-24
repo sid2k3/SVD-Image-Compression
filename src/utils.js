@@ -52,7 +52,9 @@ export function display_compressed_image(image_id, outputImage, mode) {
       ? store.get('previewBlob')
       : store.get('imagesBlobs')[image_id]
 
-  const src = window.URL.createObjectURL(blob)
+  const urlCreator = window.URL || window.webkitURL
+  if (!blob) return
+  const src = urlCreator.createObjectURL(blob)
   outputImage.src = src
   const downloadAnchor = document.querySelector('#downloadLink')
   downloadAnchor.href = src

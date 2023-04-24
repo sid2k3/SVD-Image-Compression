@@ -1,16 +1,19 @@
 class Store {
-  constructor() {
-    window.dataStore = {
-      previewLoading: false,
-      previewLoaded: false,
-      highQualityLoading: false,
-      highQualityLoaded: false,
-      inputImageType: '',
-      outputImageType: 'WebP',
-      inputImageSize: '',
-      outputImageSize: '',
-    }
+  INITIAL_STATE = {
+    previewLoading: false,
+    previewLoaded: false,
+    highQualityLoading: false,
+    highQualityLoaded: false,
+    inputImageType: '',
+    outputImageType: 'WebP',
+    inputImageSize: '',
+    outputImageSize: '',
   }
+
+  constructor() {
+    window.dataStore = { ...this.INITIAL_STATE }
+  }
+
   set(key, value) {
     if (key === 'previewLoading' && !!value) {
       const loadingContainer = document.querySelector('#loading_container')
@@ -28,8 +31,13 @@ class Store {
     }
     window.dataStore[key] = value
   }
+
   get(key) {
     return window.dataStore[key]
+  }
+
+  reset() {
+    window.dataStore = { ...this.INITIAL_STATE }
   }
 }
 
