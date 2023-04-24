@@ -1,4 +1,4 @@
-import { showInfoPane } from './infoPane'
+import { showInfoPane, hideInfoPane } from './infoPane'
 import { store } from './store'
 
 const outputImage = document.querySelector('#compressed_image')
@@ -116,6 +116,7 @@ export function getBlob(canvas) {
 
 export function reset() {
   store.reset()
+  hideInfoPane()
   const rangeQualityInput = document.querySelector('#qualityRange')
   rangeQualityInput.value = 0
 
