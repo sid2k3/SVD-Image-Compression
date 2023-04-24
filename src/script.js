@@ -20,14 +20,14 @@ const uploadButton = document.querySelector('#uploadBtn')
 fileSelector.addEventListener('change', handleImage)
 
 function handleImage(e) {
-  const inputFile = e.target
+  const inputFile = e.target.files[0]
 
   //return if no file is selected
-  if (inputFile.files.length === 0) {
+  if (e.target.files.length === 0) {
     return
   }
 
-  if (inputFile.files.length) {
+  if (e.target.files.length) {
     sendImageFile(inputFile)
   }
 }
