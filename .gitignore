@@ -1,9 +1,5 @@
 .vscode
-*.txt
-*.jpg
-*.jpeg
 temp.cpp
-*.webp
 *.exe
 public/*.js
 public/*.wasm
