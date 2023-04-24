@@ -149,11 +149,22 @@ body {
   z-index: 10;
   right: 0;
   color: rgb(71, 136, 233);
-  font-family: 'Bruno Ace', cursive;
-  font-size: 1.5rem;
   padding: 1em;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: column;
+  width: max-content;
+  gap: 0.5em;
+  text-align: end;
+}
+
+#footer p {
+  color: white;
+  /* font-size: large; */
+}
+
+#footer h1 {
+  font-family: 'Bruno Ace', cursive;
+  font-size: 1.5rem;
 }
 
 #fileBrowser {
