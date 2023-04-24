@@ -3,6 +3,7 @@ import {
   display_separator,
   create_image_blobs,
   reset,
+  isImageFile,
 } from './utils'
 import { store } from './store'
 import { showInfoPane } from './infoPane'
@@ -33,6 +34,10 @@ function handleImage(e) {
 }
 
 export function sendImageFile(inputFile) {
+  if (!inputFile || !isImageFile(inputFile)) {
+    return
+  }
+
   reset()
   const initialFileSize = inputFile.size / 1024
   console.log(`Initial size: ${Math.round(initialFileSize, 2)} KB`)

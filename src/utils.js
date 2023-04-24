@@ -122,3 +122,7 @@ export function reset() {
 
   document.documentElement.style.setProperty('--split-point-percentage', `50%`)
 }
+
+export function isImageFile(inputFile) {
+  return inputFile.type.includes('image')
+}
