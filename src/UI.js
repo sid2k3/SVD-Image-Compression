@@ -1,11 +1,11 @@
 import './css/styles.css'
-import { sendImageFile } from './script'
 import { store } from './store'
 import {
   display,
   get_cursor_position_relative_to_element,
   get_percentage_from_x,
   updateSeparator,
+  sendImageFile,
 } from './utils'
 
 const separator = document.querySelector('#quality_separator')
