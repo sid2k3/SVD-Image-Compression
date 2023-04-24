@@ -1,5 +1,5 @@
-@import './loading.css';
-@import './background.css';
+@import '../../vendor/css/background.css';
+@import '../../vendor/css/loading.css';
 @import url('https://fonts.googleapis.com/css2?family=Bruno+Ace&family=Cormorant+Garamond:ital,wght@1,300&display=swap');
 * {
   box-sizing: border-box;
