@@ -200,15 +200,17 @@ body {
   position: absolute;
   top: 0;
   /* width: 300px; */
-  background: #474343b0;
+  background: #111111c4;
   margin: 1em;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: repeat(5, 1fr);
+  border-radius: 5px;
   padding: 1em;
   color: white;
   font-family: 'Bruno Ace', cursive;
   gap: 1em;
+  box-shadow: 0 0 2px 0 white;
 }
 
 #infoPane div:nth-child(odd) {
