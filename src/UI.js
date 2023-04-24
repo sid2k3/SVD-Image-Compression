@@ -16,11 +16,20 @@ const uploadButton = document.querySelector('#uploadBtn')
 
 let isEventAttached = false
 
-const moveListener = (event) => {
+uploadButton.addEventListener('click', (e) => {
+  store.reset()
+  e.preventDefault()
+  rangeQualityInput.value = 0
+  fileSelect.click()
+  document.documentElement.style.setProperty('--split-point-percentage', `50%`)
+})
+
+const moveListener = (isTouch, event) => {
   if (!isEventAttached) return
 
   event.preventDefault()
 
+  if (isTouch) event = event.touches[0]
   const [x, _] = get_cursor_position_relative_to_element(parent, event)
   const percentage = get_percentage_from_x(x, parent)
 
@@ -36,8 +45,24 @@ separator.addEventListener('mousedown', (event) => {
 
   if (isEventAttached) return
   separator.classList.add('dragging')
-  parent.addEventListener('mousemove', moveListener)
+  parent.addEventListener('mousemove', moveListener.bind(null, false))
   isEventAttached = true
+})
+
+separator.addEventListener('touchstart', (event) => {
+  event.preventDefault()
+
+  if (isEventAttached) return
+  separator.classList.add('dragging')
+  parent.addEventListener('touchmove', moveListener.bind(null, true))
+  isEventAttached = true
+})
+
+parent.addEventListener('touchend', (event) => {
+  event.preventDefault()
+  isEventAttached = false
+  separator.classList.remove('dragging')
+  parent.removeEventListener('touchmove', moveListener)
 })
 
 parent.addEventListener('mouseup', (event) => {
@@ -82,11 +107,3 @@ if (mediaQuery.matches) {
 } else {
   rangeQualityInput.setAttribute('orient', 'vertical')
 }
-
-uploadButton.addEventListener('click', (e) => {
-  store.reset()
-  e.preventDefault()
-  rangeQualityInput.value = 0
-  fileSelect.click()
-  document.documentElement.style.setProperty('--split-point-percentage', `50%`)
-})
