@@ -85,12 +85,18 @@ export function display_separator() {
   const input_canvas = document.querySelector('#input_canvas')
   const separator_svg = document.querySelector('#quality_separator_icon')
   separator_svg.style.removeProperty('visibility')
-  const img_width = input_canvas.getBoundingClientRect().width
 
-  document.documentElement.style.setProperty(
-    '--split-point',
-    `${img_width / 2}px`
-  )
+  // this setTimeout is needed to make sure this runs AFTER
+  // layout has been computed and the width of the input canvas
+  // is updated
+  // see https://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
+  setTimeout(() => {
+    const img_width = input_canvas.getBoundingClientRect().width
+    document.documentElement.style.setProperty(
+      '--split-point',
+      `${img_width / 2}px`
+    )
+  }, 0)
 }
 
 export function get_cursor_position_relative_to_element(element, event) {
