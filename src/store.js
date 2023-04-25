@@ -37,7 +37,7 @@ class Store {
   }
 
   reset() {
-    window.dataStore = { ...this.INITIAL_STATE }
+    window.dataStore = { ...this.INITIAL_STATE, worker: this.get('worker') }
   }
 }
 
