@@ -4,7 +4,9 @@ const infoPane = document.querySelector('#infoPane')
 const inputImageSizeElement = document.querySelector('#inputImageSize')
 const outputImageSizeElement = document.querySelector('#outputImageSize')
 const inputImageTypeElement = document.querySelector('#inputImageType')
-const outputImageTypeElement = document.querySelector('#outputImageType')
+const outputImageSelectElement = document.querySelector(
+  '#outputImageTypeSelect'
+)
 const imageGainSizeElement = document.querySelector('#imageGainSize')
 
 export const set = (key, value) => {
@@ -34,8 +36,10 @@ export const showInfoPane = ({
   console.log(store.get('imageGainSize'))
   inputImageSizeElement.textContent = inputImageSize
   outputImageSizeElement.textContent = outputImageSize
-  inputImageTypeElement.textContent = inputImageType
-  outputImageTypeElement.textContent = outputImageType
+  inputImageTypeElement.textContent = inputImageType.substring(
+    inputImageType.indexOf('/') + 1
+  )
+  outputImageSelectElement.value = outputImageType
   if (percentageReduction < 0) {
     imageGainSizeElement.textContent = '↓ ' + store.get('imageGainSize')
   } else {

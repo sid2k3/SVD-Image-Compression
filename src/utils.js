@@ -131,7 +131,6 @@ export function updateSeparator() {
 }
 
 export function getBlob(canvas, imageType, imageQuality) {
-  console.log({ imageType, imageQuality, canvas })
   return new Promise((resolve) =>
     canvas.toBlob(resolve, `image/${imageType}`, imageQuality)
   )
@@ -197,6 +196,8 @@ export function sendImageFile(inputFile) {
     }
     canvas.width = img.width
     canvas.height = img.height
+    store.set('imageWidth', img.width)
+    store.set('imageHeight', img.height)
     context.drawImage(img, 0, 0)
     const image_size = img.width * img.height * 4
     const imageData = context.getImageData(0, 0, img.width, img.height)
@@ -291,4 +292,59 @@ export function sendImageFile(inputFile) {
       }
     }
   }
+}
+
+//Create blobs for an extension other than the default output extension on user's request
+export async function createExtraBlobs(targetImageType) {
+  //blobs of targetImageType already exist
+  if (store.get('imagesBlobs')[targetImageType] !== undefined) {
+    return
+  }
+
+  const currentDisplayedFormat = store.get('outputImageType')
+
+  const promises = []
+
+  for (let i = 0; i < 6; i++) {
+    const blob = store.get('imagesBlobs')[currentDisplayedFormat][i]
+    const imageQuality = store.get('imageAlgorithmQualities')[i]
+    promises.push(getConvertedBlob(blob, targetImageType, imageQuality))
+  }
+
+  const blobs = await Promise.all(promises)
+  store.get('imagesBlobs')[targetImageType] = blobs
+}
+
+export async function transformImage(targetImageType) {
+  store.set('highQualityLoaded', false)
+  await createExtraBlobs(targetImageType)
+  store.set('outputImageType', targetImageType)
+  display(store.get('displayedImageId'))
+  store.set('highQualityLoaded', true)
+}
+
+async function createImage(blob) {
+  const urlCreator = window.URL || window.webkitURL
+  const src = urlCreator.createObjectURL(blob)
+  const newImg = document.createElement('img')
+  newImg.src = src
+
+  return new Promise((resolve) => {
+    newImg.onload = () => {
+      resolve(newImg)
+    }
+  })
+}
+
+async function getConvertedBlob(currentBlob, targetImageType, imageQuality) {
+  const newImg = await createImage(currentBlob)
+
+  const canvas = document.createElement('canvas')
+  canvas.width = newImg.width
+  canvas.height = newImg.height
+
+  const context = canvas.getContext('2d')
+  context.drawImage(newImg, 0, 0)
+
+  return await getBlob(canvas, targetImageType, imageQuality)
 }
