@@ -1,10 +1,15 @@
 # SVD On Device Image Compression
 
+
 A simple and convenient client side tool to compress images. 
 
-Compression is implemented using [Singular Value Decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition) and is written in C++ which is then compiled to Web Assembly(under 500 bytes when gzipped!)
+Compression is implemented using [Singular Value Decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition) and is written in C++ which is then compiled to Web Assembly(under 500 bytes when gzipped!)    
+  
+&nbsp;
 
-![Screenshot_20230425_020130](https://user-images.githubusercontent.com/10794178/234109860-a78768db-ece9-4b87-ae68-458e2ed9be93.png)
+    
+![Screenshot 2023-04-26 040749](https://user-images.githubusercontent.com/100620626/234419329-a01aaa6b-6607-4305-9d19-07d300beab4d.png)
+
 ## How to develop
 
 Install the dependencies
