@@ -40,7 +40,7 @@ double roundValue(double value)
     }
     return lround(value);
 }
-void reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::MatrixXd &img_b, uintptr_t bufferStart)
+void reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::MatrixXd &img_b, uintptr_t bufferStart, double *a_ptr)
 {
     auto r_vec = img_r.reshaped();
     auto g_vec = img_g.reshaped();
@@ -57,7 +57,7 @@ void reconstruct_image(Eigen::MatrixXd &img_r, Eigen::MatrixXd &img_g, Eigen::Ma
         final_img[j++] = roundValue(r_vec[i]);
         final_img[j++] = roundValue(g_vec[i]);
         final_img[j++] = roundValue(b_vec[i]);
-        final_img[j++] = 255;
+        final_img[j++] = a_ptr[i];
     }
 }
 
@@ -65,7 +65,7 @@ typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> MyMatrix;
 
 void compress(
     int rank,
-    MyMatrix &img_r, MyMatrix &img_g, MyMatrix &img_b, uintptr_t outputImageBufferStart)
+    MyMatrix &img_r, MyMatrix &img_g, MyMatrix &img_b, uintptr_t outputImageBufferStart, double *a_ptr)
 {
 
     std::future<Eigen::MatrixXd>
@@ -84,7 +84,7 @@ void compress(
     Eigen::
         MatrixXd compressed_img_b = f3.get();
 
-    reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b, outputImageBufferStart);
+    reconstruct_image(compressed_img_r, compressed_img_g, compressed_img_b, outputImageBufferStart, a_ptr);
 }
 
 // Output of each rank will have its own corressponding image buffer
@@ -95,13 +95,14 @@ void run(int len, int width, std::vector<int> ranks, uintptr_t imageBufferStart)
     double *r_ptr = new double[len * width];
     double *g_ptr = new double[len * width];
     double *b_ptr = new double[len * width];
+    double *a_ptr = new double[len * width];
 
     for (int i{0}, j{0}; i < len * width; i++)
     {
         r_ptr[i] = inputImagePixels[j++];
         g_ptr[i] = inputImagePixels[j++];
         b_ptr[i] = inputImagePixels[j++];
-        j++;
+        a_ptr[i] = inputImagePixels[j++];
     }
 
     size_t nrow = len;
@@ -127,14 +128,19 @@ void run(int len, int width, std::vector<int> ranks, uintptr_t imageBufferStart)
         rank = ranks[cur];
         uintptr_t outputimageBuffer = imageBufferStart + offset;
 
-        temp_future_vector.emplace_back(std::async(std::launch::async, compress, rank, std::ref(img_r), std::ref(img_g), std::ref(img_b), outputimageBuffer));
+        temp_future_vector.emplace_back(std::async(std::launch::async, compress, rank, std::ref(img_r), std::ref(img_g), std::ref(img_b), outputimageBuffer, a_ptr));
 
         offset += size;
     }
+
+    // wait for all the threads to finish
+    temp_future_vector.clear();
+
     // free the memory to prevent memory leaks
     delete[] r_ptr;
     delete[] g_ptr;
     delete[] b_ptr;
+    delete[] a_ptr;
 }
 
 EMSCRIPTEN_BINDINGS(my_module)
