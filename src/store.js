@@ -32,6 +32,11 @@ class Store {
       loadingContainer.classList.add('hidden')
       const wrapper = document.querySelector('#wrapper')
       wrapper.classList.remove('hidden')
+
+      const outputFormatSelect = document.querySelector(
+        '#outputImageTypeSelect'
+      )
+      outputFormatSelect.disabled = false
     } else if (key === 'highQualityLoaded' && !value) {
       const infoPane = document.querySelector('#infoPane')
       infoPane.classList.add('hidden')
@@ -48,6 +53,8 @@ class Store {
   }
 
   reset() {
+    const outputFormatSelect = document.querySelector('#outputImageTypeSelect')
+    outputFormatSelect.disabled = true
     window.dataStore = { ...this.INITIAL_STATE, worker: this.get('worker') }
   }
 }
