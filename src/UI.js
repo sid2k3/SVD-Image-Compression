@@ -6,6 +6,7 @@ import {
   get_percentage_from_x,
   updateSeparator,
   sendImageFile,
+  transformImage,
 } from './utils'
 
 const separator = document.querySelector('#quality_separator')
@@ -16,9 +17,16 @@ const rangeQualityInput = document.querySelector('#qualityRange')
 const uploadButton = document.querySelector('#uploadBtn')
 const downloadLink = document.querySelector('#downloadLink')
 const dragFeedback = document.querySelector('#dragFeedback')
+const ouputImageTypeSelectElement = document.querySelector(
+  '#outputImageTypeSelect'
+)
 
 let isEventAttached = false
 
+ouputImageTypeSelectElement.addEventListener('change', (e) => {
+  const outputImageType = e.target.value
+  transformImage(outputImageType)
+})
 uploadButton.addEventListener('touchstart', (e) => {
   e.preventDefault()
   uploadButton.click()

@@ -206,6 +206,13 @@ body {
   max-height: 100%;
   max-width: 100%;
 }
+#outputImageTypeSelect {
+  font-size: 1em;
+  background: #111111c4;
+  color: white;
+  font-family: 'Bruno Ace', cursive;
+  padding: 5px;
+}
 
 #infoPane {
   position: absolute;
