@@ -36,7 +36,9 @@ export const showInfoPane = ({
   console.log(store.get('imageGainSize'))
   inputImageSizeElement.textContent = inputImageSize
   outputImageSizeElement.textContent = outputImageSize
-  inputImageTypeElement.textContent = inputImageType
+  inputImageTypeElement.textContent = inputImageType.substring(
+    inputImageType.indexOf('/') + 1
+  )
   outputImageSelectElement.value = outputImageType
   if (percentageReduction < 0) {
     imageGainSizeElement.textContent = '↓ ' + store.get('imageGainSize')

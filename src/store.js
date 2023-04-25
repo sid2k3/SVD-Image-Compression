@@ -10,6 +10,7 @@ class Store {
     outputImageSize: '',
     imageAlgorithmQualities: [0.4, 0.45, 0.6, 0.65, 0.7, 0.75],
     supportedFormats: ['webp', 'jpeg', 'png'],
+    displayedImageId: 0,
   }
 
   constructor() {
