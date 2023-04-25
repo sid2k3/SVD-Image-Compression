@@ -300,24 +300,12 @@ export async function createExtraBlobs(targetImageType) {
   const promises = []
 
   for (let i = 0; i < 6; i++) {
-    const canvas = document.createElement('canvas')
-    canvas.width = store.get('imageWidth')
-    canvas.height = store.get('imageHeight')
-
-    const context = canvas.getContext('2d')
     const blob = store.get('imagesBlobs')[currentDisplayedFormat][i]
-
-    const newImg = await createImage(blob)
-
-    context.drawImage(newImg, 0, 0)
-
-    promises.push(
-      getBlob(canvas, targetImageType, store.get('imageAlgorithmQualities')[i])
-    )
+    const imageQuality = store.get('imageAlgorithmQualities')[i]
+    promises.push(getConvertedBlob(blob, targetImageType, imageQuality))
   }
 
   const blobs = await Promise.all(promises)
-
   store.get('imagesBlobs')[targetImageType] = blobs
 }
 
@@ -340,4 +328,17 @@ async function createImage(blob) {
       resolve(newImg)
     }
   })
+}
+
+async function getConvertedBlob(currentBlob, targetImageType, imageQuality) {
+  const newImg = await createImage(currentBlob)
+
+  const canvas = document.createElement('canvas')
+  canvas.width = newImg.width
+  canvas.height = newImg.height
+
+  const context = canvas.getContext('2d')
+  context.drawImage(newImg, 0, 0)
+
+  return await getBlob(canvas, targetImageType, imageQuality)
 }
