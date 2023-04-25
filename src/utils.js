@@ -27,7 +27,11 @@ export async function create_image_blobs(
     imageData.data.set(bufferArray.subarray(0, image_size))
     context.putImageData(imageData, 0, 0)
 
-    const blob = await getBlob(canvas)
+    const blob = await getBlob(
+      canvas,
+      store.get('outputImageType'),
+      store.get('imageAlgorithmQualities')[0]
+    )
 
     store.set('previewBlob', blob)
 
@@ -41,17 +45,26 @@ export async function create_image_blobs(
     )
 
     context.putImageData(imageData, 0, 0)
-    promises.push(getBlob(canvas))
+    promises.push(
+      getBlob(
+        canvas,
+        store.get('outputImageType'),
+        store.get('imageAlgorithmQualities')[i]
+      )
+    )
   }
   const blobs = await Promise.all(promises)
-  store.set('imagesBlobs', blobs)
+
+  const imageType = store.get('outputImageType')
+
+  store.set('imagesBlobs', { [imageType]: blobs })
 }
 
 export function display_compressed_image(image_id, outputImage, mode) {
   const blob =
     mode === 'preview'
       ? store.get('previewBlob')
-      : store.get('imagesBlobs')[image_id]
+      : store.get('imagesBlobs')[store.get('outputImageType')][image_id]
 
   const urlCreator = window.URL || window.webkitURL
   if (!blob) return
@@ -111,8 +124,11 @@ export function updateSeparator() {
   document.documentElement.style.setProperty('--split-point', `${x}px`)
 }
 
-export function getBlob(canvas) {
-  return new Promise((resolve) => canvas.toBlob(resolve, 'image/webp'))
+export function getBlob(canvas, imageType, imageQuality) {
+  console.log({ imageType, imageQuality, canvas })
+  return new Promise((resolve) =>
+    canvas.toBlob(resolve, `image/${imageType}`, imageQuality)
+  )
 }
 
 export function reset() {
