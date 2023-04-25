@@ -8,7 +8,8 @@ class Store {
     outputImageType: 'webp',
     inputImageSize: '',
     outputImageSize: '',
-    imageAlgorithmQualities: [0.5, 0.55, 0.6, 0.65, 0.7, 0.75],
+    imageAlgorithmQualities: [0.4, 0.45, 0.6, 0.65, 0.7, 0.75],
+    supportedFormats: ['webp', 'jpeg', 'png'],
   }
 
   constructor() {
@@ -25,10 +26,19 @@ class Store {
       const loadingContainer = document.querySelector('#loading_container')
       loadingContainer.classList.add('hidden')
     } else if (key === 'highQualityLoaded' && !!value) {
+      const infoPane = document.querySelector('#infoPane')
+      infoPane.classList.remove('hidden')
       const loadingContainer = document.querySelector('#loading_container')
       loadingContainer.classList.add('hidden')
       const wrapper = document.querySelector('#wrapper')
       wrapper.classList.remove('hidden')
+    } else if (key === 'highQualityLoaded' && !value) {
+      const infoPane = document.querySelector('#infoPane')
+      infoPane.classList.add('hidden')
+      const loadingContainer = document.querySelector('#loading_container')
+      loadingContainer.classList.remove('hidden')
+      const wrapper = document.querySelector('#wrapper')
+      wrapper.classList.add('hidden')
     }
     window.dataStore[key] = value
   }
