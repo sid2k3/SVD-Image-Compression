@@ -10,6 +10,9 @@ Compression is implemented using [Singular Value Decomposition](https://en.wikip
     
 ![Screenshot 2023-04-26 040749](https://user-images.githubusercontent.com/100620626/234419329-a01aaa6b-6607-4305-9d19-07d300beab4d.png)
 
+  
+&nbsp;
+***Note** :- The current version can support images up to 4k resolution*
 ## How to develop
 
 Install the dependencies
